@@ -2,33 +2,31 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<!-- The preview picture shown when the page's link is shared (site/og.png), in EconNobel's style: the name line, the
-     title, a grey rule and one line underneath; on the right, every measure on the map (from site/galaxy.json).
-     Rendered at 1200 x 630, twice as sharp (2400 x 1260), by headless Chrome; the command is in the README. -->
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<!-- The preview picture shown when the page's link is shared (site/og.png): the Map view as on the page (shaded themes,
+     every measure as a dot, theme names), with the page's name on top left. The latest budget's measures are in colour and
+     the rest faint, as on the page (?year=2025 picks another budget, ?year=all colours every measure). Data:
+     site/galaxy.json. Rendered at
+     1200 x 630, twice as sharp (2400 x 1260), by headless Chrome; the command is in the README. -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
   html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #fbfaf8; }
   body { position: relative; font-family: "IBM Plex Sans", sans-serif; color: #14171c; }
-  .brand { position: absolute; left: 67px; top: 52px; font-size: 25px; display: flex; align-items: center; gap: 12px; }
-  .brand .dot { width: 13px; height: 13px; border-radius: 50%; background: #2148cc; }
+  .top { position: absolute; left: 46px; right: 46px; top: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 12px; font-size: 27px; }
+  .brand .dot { width: 14px; height: 14px; border-radius: 50%; background: #2148cc; }
   .brand b { font-weight: 600; }
   .brand span.by { color: #6a727d; }
-  h1 { position: absolute; left: 63px; top: 236px; margin: 0; font: 700 68px/1.1 "Source Serif 4", serif; letter-spacing: -.03em; }
-  h1 span { color: #2148cc; }
-  .rule { position: absolute; left: 67px; right: 67px; top: 500px; height: 1px; background: #6a727d; }
-  .foot { position: absolute; left: 67px; right: 67px; top: 532px; display: flex; justify-content: space-between; font-size: 23px; color: #6a727d; }
-  .foot b { color: #14171c; font-weight: 600; }
-  svg { position: absolute; right: 56px; top: 100px; }
+  .note { font-size: 21px; color: #6a727d; }
+  .note b { color: #14171c; font-weight: 600; }
+  svg { position: absolute; left: 0; top: 74px; }
 </style>
 </head>
 <body>
-  <div class="brand"><span class="dot"></span><b>Budget Galaxy</b><span class="by">by Farhad Panahov</span></div>
-  <h1>What does the <span>budget</span> say?</h1>
-  <svg id="g" width="300" height="380"></svg>
-  <div class="rule"></div>
-  <div class="foot"><span>Every measure in Canada's federal budgets, 2022 to 2026</span><span><b>Map · Gravity · Priorities</b></span></div>
+  <div class="top"><div class="brand"><span class="dot"></span><b>Budget Galaxy</b><span class="by">by Farhad Panahov</span></div><div class="note" id="note"></div></div>
+  <svg id="map" width="1200" height="556"></svg>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script>
-// the page's theme colours (site/index.html)
+// the page's theme colours and map settings (site/index.html)
 const COLOURS = {
   "Defence & security": "#9a5b22", "Housing": "#c0359a", "Health care": "#0f9488", "Affordability & social support": "#2f5fd8",
   "Jobs, skills & immigration": "#8fae1b", "Indigenous": "#d2372f", "Infrastructure": "#ee77b0",
@@ -36,19 +34,54 @@ const COLOURS = {
   "Research, AI & technology": "#1aa3d1", "Taxation": "#e9771e", "Culture & communities": "#d4a300", "Government": "#5f7389",
   "Other": "#9a958c",
 };
+const OFF = "#c9c4bb", W = 1200, H = 556, pad = 26, FS = 18;
+const asked = new URLSearchParams(location.search).get("year");   // none: the latest budget; "all": every measure in colour
 fetch("../site/galaxy.json").then((r) => r.json()).then((d) => {
-  const svg = document.getElementById("g"), W = 300, H = 380, pad = 10, NS = "http://www.w3.org/2000/svg";
-  const r = (m) => (m.money == null ? 2 : Math.min(11, 2.1 + 1.9 * Math.sqrt(Math.abs(m.money))));
-  // biggest first, so small dots sit on top
-  d.measures.slice().sort((a, b) => Math.abs(b.money || 0) - Math.abs(a.money || 0)).forEach((m) => {
-    const c = document.createElementNS(NS, "circle");
-    c.setAttribute("cx", pad + m.x * (W - 2 * pad)); c.setAttribute("cy", pad + (1 - m.y) * (H - 2 * pad)); c.setAttribute("r", r(m));
-    const col = COLOURS[d.categories[m.cat].name];
-    if (m.money != null && m.money < 0) { c.setAttribute("fill", "#fbfaf8"); c.setAttribute("stroke", col); c.setAttribute("stroke-width", 1.2); }
-    else { c.setAttribute("fill", col); c.setAttribute("fill-opacity", 0.85); c.setAttribute("stroke", "#fbfaf8"); c.setAttribute("stroke-width", 0.6); }
-    svg.append(c);
+  const M = d.measures, C = d.categories, pick = asked === "all" ? null : +asked || d.years[d.years.length - 1];
+  C.forEach((c) => { c.colour = COLOURS[c.name] || "#858c96"; });
+  document.getElementById("note").innerHTML = pick
+    ? `<b>Budget ${pick}</b> in colour`
+    : `Every measure in Canada's federal budgets, ${d.years[0]} to ${d.years[d.years.length - 1]}`;
+  const svg = d3.select("#map"), x = d3.scaleLinear([0, 1], [pad, W - pad]), y = d3.scaleLinear([0, 1], [H - pad, pad]);
+  svg.append("defs").html(`<filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>`);
+  // each theme's area: a smoothed density of its dots, cut at about a fifth of its peak; the patch holding most of its
+  // measures, plus any other holding a quarter or more of them
+  const geo = d3.geoPath(), bw = Math.max(14, 0.028 * W);
+  const shapes = C.map((c) => {
+    const pts = M.filter((m) => m.cat === c.id);
+    const cs = d3.contourDensity().x((m) => x(m.x)).y((m) => y(m.y)).size([W, H]).bandwidth(bw).thresholds(20)(pts);
+    const peak = cs[cs.length - 1].value, shape = cs.find((s) => s.value >= peak * 0.3) || cs[0];
+    const counted = shape.coordinates.map((poly) => ({ poly, n: pts.filter((m) => d3.polygonContains(poly[0], [x(m.x), y(m.y)])).length }));
+    const most = d3.max(counted, (p) => p.n);
+    return { c, shape: { type: "MultiPolygon", coordinates: counted.filter((p) => p.n === most || p.n >= 0.25 * pts.length).map((p) => p.poly) } };
   });
-  document.body.dataset.ready = "1";
+  svg.append("g").attr("filter", "url(#soft)").selectAll("path").data(shapes).join("path")
+    .attr("d", (s) => geo(s.shape)).attr("fill", (s) => s.c.colour).attr("fill-opacity", 0.27);
+  // the dots: biggest first (small ones on top); the picked budget's measures last, in front
+  const r = d3.scaleSqrt([0, 30], [2.6, 18]).clamp(true), rad = (m) => (m.money != null ? r(Math.abs(m.money)) : 2.6);
+  const on = (m) => !pick || m.year === pick, saving = (m) => m.money != null && m.money < 0;
+  const order = M.slice().sort((a, b) => (on(a) - on(b)) || Math.abs(b.money || 0) - Math.abs(a.money || 0));
+  svg.append("g").selectAll("circle").data(order).join("circle")
+    .attr("cx", (m) => x(m.x)).attr("cy", (m) => y(m.y)).attr("r", rad)
+    .attr("fill", (m) => (!on(m) ? (saving(m) ? "none" : OFF) : saving(m) ? d3.interpolateRgb("#fff", C[m.cat].colour)(0.18) : C[m.cat].colour))
+    .attr("stroke", (m) => (saving(m) ? (on(m) ? C[m.cat].colour : OFF) : on(m) ? "#fff" : "none"))
+    .attr("stroke-width", (m) => (saving(m) ? 1.8 : 0.7)).attr("opacity", (m) => (on(m) ? 1 : 0.32));
+  // the theme names on each theme's densest spot, pushed apart where they would overlap
+  const font = `600 ${FS}px IBM Plex Sans`, ctx = document.createElement("canvas").getContext("2d"); ctx.font = font;
+  const items = C.map((c) => ({ c, px: x(c.ax), py: y(c.ay), w: ctx.measureText(c.name).width + 8, h: FS + 4 }));
+  for (let round = 0; round < 60; round++) {
+    let moved = false;
+    for (let a = 0; a < items.length; a++) for (let b = a + 1; b < items.length; b++) {
+      const A = items[a], B = items[b], ox = (A.w + B.w) / 2 - Math.abs(A.px - B.px), oy = (A.h + B.h) / 2 - Math.abs(A.py - B.py);
+      if (ox > 0 && oy > 0) { const s = (A.py <= B.py ? -1 : 1) * (oy / 2 + 0.5); A.py += s; B.py -= s; moved = true; }
+    }
+    if (!moved) break;
+  }
+  items.forEach((it) => { it.px = Math.max(it.w / 2 + 4, Math.min(W - it.w / 2 - 4, it.px)); it.py = Math.max(FS + 2, Math.min(H - 6, it.py)); });
+  svg.append("g").selectAll("text").data(items).join("text").attr("x", (it) => it.px).attr("y", (it) => it.py + FS * 0.35)
+    .attr("text-anchor", "middle").attr("font-size", FS + "px").attr("font-weight", 600).attr("font-family", "IBM Plex Sans")
+    .attr("fill", (it) => d3.color(it.c.colour).darker(1.1)).attr("stroke", "#fbfaf8").attr("stroke-width", 4).attr("paint-order", "stroke")
+    .text((it) => it.c.name);
 });
 </script>
 </body>

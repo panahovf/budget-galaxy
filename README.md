@@ -9,7 +9,8 @@ rising up the list or falling off it). Part of [Farhad Panahov's website](https:
 - `site/` is the web page, published at [panahovf.github.io/budget-galaxy](https://panahovf.github.io/budget-galaxy/).
   - `index.html`: the page.
   - `galaxy.json`: everything the page draws. Written by step 5 below; don't edit it by hand.
-  - `og.png`: the preview picture shown when the link is shared (made from `tools/og.html`, see below).
+  - `og.png`: the preview picture shown when the link is shared: the Map, with the latest budget in colour (made from
+    `tools/og.html`, see below).
 - The five notebooks at the top, one per step, each saved with its output so its tables and checks can be read without
   running it; `data/` and `checks/` hold what they write, `manual/` the decisions made by hand.
 - `.github/workflows/publish.yml` publishes `site/` on every push to `main`.
