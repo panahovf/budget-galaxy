@@ -48,6 +48,10 @@
   /* page head: the subtitle in two even lines (it stays two lines from 740px wide), then the chart close under it */
   .pagehead p.sub { max-width: 48rem; text-wrap: balance; }
   .pagehead { padding-bottom: 32px; }
+  /* the way back to all topics, and the page's name above its question (as on the Monitor's other pages) */
+  .crumb { display: inline-block; font-size: .84rem; color: var(--muted); margin-bottom: 18px; }
+  .crumb:hover { color: var(--ink); }
+  .pagehead .label { margin-bottom: 14px; }
   .group#s1 { padding-top: 0; }
   /* the chart card: title, how to read (with the keys), the chart, the themes, the source */
   .chart h3 { margin-bottom: 10px; }
@@ -128,15 +132,17 @@
 
 <header class="topbar">
   <div class="wrap">
-    <!-- The page's name (plain text), then the way back to the portfolio, in the portfolio's brand style (dot, bold, light) -->
+    <!-- Monitor (the way back to all topics), then the way back to the portfolio, in the portfolio's brand style (dot, bold, light) -->
     <div class="brand">
-      <span class="dot"></span><span class="first">Budget Galaxy</span><a class="last by" href="https://panahovf.github.io/index.html">by Farhad Panahov</a>
+      <span class="dot"></span><span class="first"><a href="/monitor/">Monitor</a></span><a class="last by" href="https://panahovf.github.io/index.html">by Farhad Panahov</a>
     </div>
   </div>
 </header>
 
 <section class="pagehead">
   <div class="wrap">
+    <a class="crumb" href="/monitor/">&larr; All topics</a>
+    <p class="label">Budget Galaxy</p>
     <h1>What does the <span class="accent">budget</span> say?</h1>
     <p class="sub">Three views of Canada's federal budgets since 2022: the Map shows how programs connect, Gravity what each budget
       is made of, and Priorities which themes are rising up the list or falling off it.</p>
@@ -214,7 +220,7 @@
     </div>
     <div class="footer-bottom">
       <p class="fine">&copy; 2026 Farhad Panahov. Views expressed here are my own.</p>
-      <nav><a href="https://panahovf.github.io/index.html">Home</a><a href="https://panahovf.github.io/research.html">Research</a><a href="https://panahovf.github.io/cv.html">CV</a></nav>
+      <nav><a href="https://panahovf.github.io/index.html">Home</a><a href="https://panahovf.github.io/research.html">Research</a><a href="https://panahovf.github.io/cv.html">CV</a><a href="https://panahovf.github.io/econnobel/">EconNobel</a><a href="https://panahovf.github.io/monitor/">Monitor</a></nav>
     </div>
   </div>
 </footer>
