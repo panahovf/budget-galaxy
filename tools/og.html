@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- The preview picture shown when the page's link is shared (site/og.png), in EconNobel's style: the name line, the
+     title, a grey rule and one line underneath; on the right, every measure on the map (from site/galaxy.json).
+     Rendered at 1200 x 630, twice as sharp (2400 x 1260), by headless Chrome; the command is in the README. -->
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #fbfaf8; }
+  body { position: relative; font-family: "IBM Plex Sans", sans-serif; color: #14171c; }
+  .brand { position: absolute; left: 67px; top: 52px; font-size: 25px; display: flex; align-items: center; gap: 12px; }
+  .brand .dot { width: 13px; height: 13px; border-radius: 50%; background: #2148cc; }
+  .brand b { font-weight: 600; }
+  .brand span.by { color: #6a727d; }
+  h1 { position: absolute; left: 63px; top: 236px; margin: 0; font: 700 68px/1.1 "Source Serif 4", serif; letter-spacing: -.03em; }
+  h1 span { color: #2148cc; }
+  .rule { position: absolute; left: 67px; right: 67px; top: 500px; height: 1px; background: #6a727d; }
+  .foot { position: absolute; left: 67px; right: 67px; top: 532px; display: flex; justify-content: space-between; font-size: 23px; color: #6a727d; }
+  .foot b { color: #14171c; font-weight: 600; }
+  svg { position: absolute; right: 56px; top: 100px; }
+</style>
+</head>
+<body>
+  <div class="brand"><span class="dot"></span><b>Budget Galaxy</b><span class="by">by Farhad Panahov</span></div>
+  <h1>What does the <span>budget</span> say?</h1>
+  <svg id="g" width="300" height="380"></svg>
+  <div class="rule"></div>
+  <div class="foot"><span>Every measure in Canada's federal budgets, 2022 to 2026</span><span><b>Map · Gravity · Priorities</b></span></div>
+<script>
+// the page's theme colours (site/index.html)
+const COLOURS = {
+  "Defence & security": "#9a5b22", "Housing": "#c0359a", "Health care": "#0f9488", "Affordability & social support": "#2f5fd8",
+  "Jobs, skills & immigration": "#8fae1b", "Indigenous": "#d2372f", "Infrastructure": "#ee77b0",
+  "Trade, industry & competitiveness": "#4b3fb0", "Clean energy & climate": "#9a55d6", "Nature & environment": "#2f9e44",
+  "Research, AI & technology": "#1aa3d1", "Taxation": "#e9771e", "Culture & communities": "#d4a300", "Government": "#5f7389",
+  "Other": "#9a958c",
+};
+fetch("../site/galaxy.json").then((r) => r.json()).then((d) => {
+  const svg = document.getElementById("g"), W = 300, H = 380, pad = 10, NS = "http://www.w3.org/2000/svg";
+  const r = (m) => (m.money == null ? 2 : Math.min(11, 2.1 + 1.9 * Math.sqrt(Math.abs(m.money))));
+  // biggest first, so small dots sit on top
+  d.measures.slice().sort((a, b) => Math.abs(b.money || 0) - Math.abs(a.money || 0)).forEach((m) => {
+    const c = document.createElementNS(NS, "circle");
+    c.setAttribute("cx", pad + m.x * (W - 2 * pad)); c.setAttribute("cy", pad + (1 - m.y) * (H - 2 * pad)); c.setAttribute("r", r(m));
+    const col = COLOURS[d.categories[m.cat].name];
+    if (m.money != null && m.money < 0) { c.setAttribute("fill", "#fbfaf8"); c.setAttribute("stroke", col); c.setAttribute("stroke-width", 1.2); }
+    else { c.setAttribute("fill", col); c.setAttribute("fill-opacity", 0.85); c.setAttribute("stroke", "#fbfaf8"); c.setAttribute("stroke-width", 0.6); }
+    svg.append(c);
+  });
+  document.body.dataset.ready = "1";
+});
+</script>
+</body>
+</html>

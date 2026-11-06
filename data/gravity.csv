@@ -1,0 +1,6 @@
+year,measures,costed,weighed,new_spending_b,savings_b,top_category,top_share,label,effective_categories,in_colour,top_saving
+2022,203,159,True,64.496,26.987,Indigenous,0.1647,broad,8.38,"Indigenous 16%, Clean energy & climate 16%, Defence & security 14%, Housing 14%, Health care 13%, Jobs, skills & immigration 8%",Taxation
+2023,209,161,True,73.658,27.832,Health care,0.4262,focused,3.85,"Health care 43%, Clean energy & climate 25%, Indigenous 8%",Taxation
+2024,292,227,True,59.702,24.888,Defence & security,0.1991,broad,8.8,"Defence & security 20%, Indigenous 15%, Housing 12%, Research, AI & technology 11%, Affordability & social support 11%, Jobs, skills & immigration 9%",Taxation
+2025,118,86,True,143.842,54.162,Defence & security,0.43,focused,3.89,"Defence & security 43%, Affordability & social support 22%, Trade, industry & competitiveness 10%, Housing 7%, Infrastructure 6%",Government
+2026,177,141,True,147.658,5.641,"Trade, industry & competitiveness",0.3563,focused,4.96,"Trade, industry & competitiveness 36%, Indigenous 20%, Affordability & social support 12%, Housing 10%, Clean energy & climate 8%",Affordability & social support

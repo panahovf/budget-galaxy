@@ -1,0 +1,13 @@
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Jupyter and Python caches
+.ipynb_checkpoints/
+__pycache__/
+.venv/
+
+# The budget pages saved by step 1 (5 MB of budget.canada.ca's HTML): not republished here. Step 1 downloads them again;
+# raw/sources.csv (committed) keeps each page's size and fingerprint, so a changed page shows up.
+raw/*/

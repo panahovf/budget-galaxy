@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Budget Galaxy | Farhad Panahov</title>
+<meta name="description" content="Every measure in Canada's federal budgets since 2022, in three views: the Map, Gravity and Priorities.">
+<link rel="canonical" href="https://panahovf.github.io/budget-galaxy/">
+<!-- The preview card when the link is shared (LinkedIn, messages...) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://panahovf.github.io/budget-galaxy/">
+<meta property="og:title" content="What does the budget say?">
+<meta property="og:description" content="Every measure in Canada's federal budgets since 2022, in three views: what each budget is made of, how programs connect, and which priorities are rising or falling.">
+<!-- Raise the "?v=1" number whenever og.png changes: the new address makes LinkedIn and others fetch the new picture
+     instead of showing a copy they saved earlier. -->
+<meta property="og:image" content="https://panahovf.github.io/budget-galaxy/og.png?v=1">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://panahovf.github.io/assets/css/style.css?v=4">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232148cc'/><text x='50' y='71' text-anchor='middle' font-size='58' font-family='Georgia,serif' fill='%23ffffff'>F</text></svg>">
+<style>
+  /* Budget Galaxy: every measure in Canada's federal budgets 2022 to 2026 in three views (Map, Gravity, Priorities).
+     The data is galaxy.json, beside this page, written by the notebooks at the top of the repository (step 5).
+     Fonts, colours, top bar, page head and footer come from the portfolio's stylesheet; this sheet adds the rest. */
+  :root { --line-dk: #cdc8bf; }
+  [hidden] { display: none !important; }
+  button { font: inherit; color: inherit; }
+  /* the card that holds the chart, and the pill switch */
+  .group { padding: 40px 0 10px; }
+  .card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 16px; min-width: 0;
+          display: flex; flex-direction: column; }
+  .card h3 { font-family: var(--display); font-size: 1.22rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; margin: 0 0 8px; }
+  .card .foot { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); font-size: .76rem; color: var(--faint); line-height: 1.5; }
+  @media (max-width: 560px) { .card { padding: 18px 16px 14px; } }
+  .seg { display: inline-flex; flex-wrap: wrap; background: var(--wash); border-radius: 999px; padding: 3px; gap: 2px; margin: 0 0 10px; }
+  .seg button { border: 0; background: none; border-radius: 999px; padding: 5px 11px; font-size: .75rem; font-weight: 500;
+                color: var(--ink-soft); cursor: pointer; }
+  .seg button:hover { background: rgba(255,255,255,.75); color: var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  /* header, as on EconNobel: the page's name, then "by Farhad Panahov" (a link back to the portfolio) */
+  .brand a:hover { text-decoration: none; }
+  .brand .by { color: var(--muted); }
+  .brand .by:hover { color: var(--ink); }
+  /* page head: the subtitle in two even lines (it stays two lines from 740px wide), then the chart close under it */
+  .pagehead p.sub { max-width: 48rem; text-wrap: balance; }
+  .pagehead { padding-bottom: 32px; }
+  .group#s1 { padding-top: 0; }
+  /* the chart card: title, how to read (with the keys), the chart, the themes, the source */
+  .chart h3 { margin-bottom: 10px; }
+  .howto { margin: 0 0 14px; }
+  .howto-lead { margin: 0 0 8px; font-size: .9rem; line-height: 1.55; color: var(--ink-soft); }
+  .howto-lead b { color: var(--ink); font-weight: 600; }
+  .howto-keys { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: .78rem; color: var(--ink-soft); }
+  .howto-keys span { display: inline-flex; align-items: center; gap: 6px; }
+  .howto-keys svg { flex: none; }
+  .howto-keys .sep { width: 1px; height: 14px; background: var(--line-dk); }
+  @media (max-width: 600px) { .howto-keys .sep { display: none; } }
+  .map { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #fdfcfa; overflow: hidden; }
+  .map svg { display: block; }
+  .map svg.over { cursor: pointer; }
+  .map svg g { pointer-events: none; }                 /* the page finds the nearest dot itself (bigger target, no flicker) */
+  .map .dot { transition: opacity .35s; }
+  .map .layer { transition: opacity .45s; }
+  /* on the chart: play and the budgets (top left), the view switch (top right) */
+  .map .bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 12px 0 10px; }
+  .years { display: flex; align-items: center; }
+  .play { flex: none; width: 32px; height: 32px; margin-right: 8px; padding: 0; border-radius: 50%; border: 1px solid var(--line-dk);
+          background: #fff; color: var(--ink); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+  .play:hover { border-color: var(--ink); }
+  .play.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .years .yr { width: 2.95rem; }                       /* fixed widths: the picked year grows without moving the others */
+  @media (max-width: 420px) { .years .yr { width: 2.6rem; font-size: .84rem; } .years .yr[aria-pressed="true"] { font-size: 1.04rem; } }
+  .yr { border: 0; background: none; height: 32px; padding: 0; cursor: pointer; font-family: var(--sans);
+        font-size: .9rem; font-weight: 500; color: var(--faint); font-variant-numeric: tabular-nums; transition: font-size .2s, color .2s; }
+  .yr:hover { color: var(--ink); }
+  .yr[aria-pressed="true"] { font-size: 1.16rem; font-weight: 700; color: var(--ink); }
+  .yr:disabled { opacity: .35; cursor: not-allowed; }
+  .views.seg { margin: 0; }
+  .views.seg button { padding: 6px 15px; font-size: .8rem; }
+  /* the themes under the chart: legend and money per theme in one list, largest first, running down the columns */
+  .cats-head { margin: 16px 0 4px; font-size: .8rem; color: var(--muted); }
+  .cats-head b { color: var(--ink); font-weight: 600; }
+  .cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); grid-auto-flow: column; gap: 0 24px; }
+  @media (max-width: 1100px) { .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(8, auto); } }
+  @media (max-width: 760px) { .cats { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; } }
+  .cat { display: grid; grid-template-columns: 10px minmax(0, 1fr) 36px 52px 32px 22px; align-items: center; gap: 8px; font-size: .8rem;
+         padding: 4px 6px; border-radius: 6px; cursor: pointer; border: 0; background: none; text-align: left; font-family: inherit; }
+  .cat:hover, .cat.on { background: var(--wash); }
+  .cat .sw { width: 10px; height: 10px; border-radius: 50%; }
+  .cat .nm { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cat .bar { height: 6px; background: var(--line); border-radius: 3px; position: relative; overflow: hidden; }
+  .cat .bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+  .cat .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .cat .sh { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-soft); font-size: .76rem; }
+  .cat .k { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .74rem; }
+  /* a clicked measure: its closest measures in earlier budgets (shown only after a click) */
+  .pinned { margin-top: 14px; padding: 10px 12px; border-radius: 8px; background: var(--wash); font-size: .84rem; color: var(--ink-soft); line-height: 1.5; }
+  .pinned b { color: var(--ink); }
+  .pinned ol { margin: 4px 0 0; padding-left: 20px; }
+  .pinned .sim { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .htip { position: fixed; z-index: 60; pointer-events: none; background: #fff; border: 1px solid var(--line); border-radius: 8px;
+          box-shadow: 0 4px 14px rgba(20,23,28,.12); padding: 6px 10px; font-size: .76rem; color: var(--ink-soft); line-height: 1.45; max-width: 300px; }
+  .htip .t { color: var(--ink); font-weight: 600; }
+  .htip b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .htip .hint { margin-top: 3px; color: var(--muted); }
+  /* data and methods: closed until clicked; plain paragraphs across the page */
+  .methods { padding: 34px 0 64px; }
+  .methods details { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .methods summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 16px; padding: 16px 0; }
+  .methods summary::-webkit-details-marker { display: none; }
+  .methods summary .open { margin: 0; font: 400 .8rem/1.4 var(--sans); letter-spacing: 0; color: var(--muted); white-space: nowrap; }
+  .methods summary .open::after { content: " +"; font-size: 1.05rem; }
+  .methods details[open] summary .open::after { content: " \2013"; }
+  .methods summary:hover .open { color: var(--ink); }
+  .methods .mbody { padding: 2px 0 12px; }
+  .methods .mbody p { max-width: none; margin: 0 0 16px; color: var(--muted); font-size: .92rem; line-height: 1.6; }
+  .methods .mbody p b { color: var(--ink); font-weight: 600; }
+  .methods .mbody a { color: var(--ink-soft); text-decoration: underline; text-decoration-color: var(--line-dk); text-underline-offset: 2px; }
+  .methods .mbody a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+
+<header class="topbar">
+  <div class="wrap">
+    <!-- The page's name (plain text), then the way back to the portfolio, in the portfolio's brand style (dot, bold, light) -->
+    <div class="brand">
+      <span class="dot"></span><span class="first">Budget Galaxy</span><a class="last by" href="https://panahovf.github.io/index.html">by Farhad Panahov</a>
+    </div>
+  </div>
+</header>
+
+<section class="pagehead">
+  <div class="wrap">
+    <h1>What does the <span class="accent">budget</span> say?</h1>
+    <p class="sub">Three views of Canada's federal budgets since 2022: the Map shows how programs connect, Gravity what each budget
+      is made of, and Priorities which themes are rising up the list or falling off it.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="group" id="s1">
+    <article class="card chart">
+      <h3 id="title">&nbsp;</h3>
+      <div class="howto"><p class="howto-lead" id="howto-lead"></p><div class="howto-keys" id="howto"></div></div>
+      <div class="map" id="map">
+        <div class="bar">
+          <div class="years"><button class="play" id="play" type="button"></button><span id="years" role="group" aria-label="Budget"></span></div>
+          <div class="seg views" id="seg-view" role="group" aria-label="View"></div>
+        </div>
+      </div>
+      <p class="cats-head" id="cats-head">&nbsp;</p>
+      <div class="cats" id="cats"></div>
+      <div class="pinned" id="pinned" hidden></div>
+      <div class="foot">Source: Department of Finance Canada, Budgets 2021 to 2026.</div>
+    </article>
+  </section>
+
+  <section class="methods">
+    <details>
+      <summary><h2 class="open">How the numbers are made</h2></summary>
+      <div class="mbody">
+        <p><b>What is here.</b> Every measure in Canada's federal Budgets 2022 to 2026, 999 in all: each item a budget chapter
+          announces under its own heading, with the text that describes it, plus the lines of the cost tables that have no
+          heading of their own. Budget 2021 is used in one place only: the Priorities averages for 2022 and 2023.</p>
+        <p><b>The money.</b> Each measure's net cost over the five or six years its budget's cost tables cover, matched line by
+          line; every table adds up to the total the budget publishes. A measure that costs money is new spending. One that saves
+          or raises money (a spending review, a tax change) is counted apart, as what pays for it. About one measure in four has
+          no line in the tables: it is drawn small and counts for its words only.</p>
+        <p><b>The themes.</b> Each measure was read in full and given one of 15 themes, by what it is for rather than how it is
+          delivered: a tax cut that lowers families' costs is Affordability, a write-off for business investment is Trade,
+          industry &amp; competitiveness. Measures aimed only at Indigenous peoples go to Indigenous. Taxation and Government
+          hold only the tax system and the running of government. Other, mostly international aid (13 measures), is grey and
+          sits out of Priorities.</p>
+        <p><b>The Map.</b> Each measure is placed by its words. Words and short phrases are scored by how particular they are to
+          the measure, folded into 100 word patterns, compared measure by measure, and laid out flat (t-SNE) so that measures
+          about similar things sit together. Only closeness counts: the map's directions mean nothing. Shading marks where each
+          theme's measures are densest.</p>
+        <p><b>Gravity.</b> A budget's new spending falls into one mass. Each theme is pulled toward the centre by its share of
+          the money: half or more of it puts a theme at the very centre, none leaves it at the rim. Themes with less than 5% of
+          the money are grey. Dot area follows the money, on one scale for every budget, so a bigger budget makes a bigger mass.
+          A budget is <i>focused</i> when one theme takes 35% or more of its new spending, <i>leaning</i> at 25 to 35%,
+          <i>broad</i> below that. Under the mass sits what pays for it: the measures that save or raise money. Budget 2026's
+          is small because the savings from its spending review were already counted in Budget 2025.</p>
+        <p><b>Priorities.</b> Money, across: a theme's share of new spending, averaged over the last three budgets, each budget
+          counting equally. Rhetoric, up: its share of the budget's words. Both lines sit at 7%, an even share among the 14
+          themes. Bubble size: what this budget puts into the theme. Savings are left out of this view.</p>
+        <p><b>Same numbers every time.</b> Five Python notebooks read the budgets, match the costs, apply the themes, draw the
+          map and add up the charts, saving their data and checks along the way; running them again gives the same results. The notebooks, data and hand decisions are <a
+          href="https://github.com/panahovf/budget-galaxy">on GitHub</a>.</p>
+        <p>Source: Department of Finance Canada, Budgets 2021 to 2026 (budget.canada.ca).</p>
+      </div>
+    </details>
+  </section>
+</div>
+
+<footer class="footer" id="contact">
+  <div class="wrap">
+    <div class="row2">
+      <div>
+        <div class="name">Farhad Panahov</div>
+        <div class="place">Economist &middot; Toronto, Canada</div>
+      </div>
+      <div class="social social--dark">
+        <a href="https://www.linkedin.com/in/panahov/" rel="me noopener noreferrer" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.3-.02-3-1.83-3-1.83 0-2.11 1.43-2.11 2.9V21H9z"/></svg> LinkedIn</a>
+        <a href="https://github.com/panahovf" rel="me noopener noreferrer" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.1.82-.26.82-.58v-2.2c-3.34.73-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.13-.3-.54-1.53.12-3.18 0 0 1.01-.33 3.3 1.23a11.5 11.5 0 0 1 6.01 0c2.29-1.56 3.3-1.23 3.3-1.23.66 1.65.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.58A12 12 0 0 0 12 .5z"/></svg> GitHub</a>
+        <a href="mailto:panahovf93@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v.3l-10 6-10-6zM2 8.1l9.47 5.68a1 1 0 0 0 1.06 0L22 8.1V18.5a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5z"/></svg> Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="fine">&copy; 2026 Farhad Panahov. Views expressed here are my own.</p>
+      <nav><a href="https://panahovf.github.io/index.html">Home</a><a href="https://panahovf.github.io/research.html">Research</a><a href="https://panahovf.github.io/cv.html">CV</a></nav>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+const INK = "#14171c", MUTED = "#6a727d", INK_SOFT = "#3b414a";
+// one colour per theme, fixed. Assigned so that themes whose dots mix on the map get the most different colours
+// (normal, deutan and protan vision), Nature kept green and Government slate
+const COLOURS = {
+  "Defence & security": "#9a5b22", "Housing": "#c0359a", "Health care": "#0f9488", "Affordability & social support": "#2f5fd8",
+  "Jobs, skills & immigration": "#8fae1b", "Indigenous": "#d2372f", "Infrastructure": "#ee77b0",
+  "Trade, industry & competitiveness": "#4b3fb0", "Clean energy & climate": "#9a55d6", "Nature & environment": "#2f9e44",
+  "Research, AI & technology": "#1aa3d1", "Taxation": "#e9771e", "Culture & communities": "#d4a300", "Government": "#5f7389",
+  "Other": "#9a958c",
+};
+const OFF = "#c9c4bb";                               // faded dots on the map
+const GREY = "#c3bdb3", GREY_RING = "#a8a297", GREY_TINT = "#f1efea";   // Gravity: themes under 5% of the money
+// the budget's label: the largest theme's share of its new spending
+const CUT_FOCUSED = 0.35, CUT_LEANING = 0.25;
+// Gravity: themes with 5% or more of their mass's money keep their colour and get a name
+const COLOUR_MIN = 0.05;
+// Gravity: where in the mass a theme is pulled to, from 0 (the centre) to 1 (the rim): 50% or more of the money to the
+// very centre, 25% halfway, 0% to the rim
+const dist = (s) => 1 - Math.min(s, 0.5) / 0.5;
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const money$ = (v) => (v >= 0.1 ? "$" + v.toFixed(1) + "B" : "$" + Math.round(v * 1000) + "M");
+const fmtB = (v) => (v == null ? "no line in the cost tables" : v < 0 ? "saves or raises " + money$(-v) : money$(v));
+const pct = (v) => Math.round(v * 100) + "%";
+const share = (v) => (v >= 0.005 ? pct(v) : "<1%");
+const lower = (c) => c.name.toLowerCase().replace(/\bai\b/, "AI");
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const canvas = document.createElement("canvas").getContext("2d");
+const textWidth = (t, font) => { canvas.font = font; return canvas.measureText(t).width; };
+
+const tip = el("div", "htip"); tip.hidden = true; document.body.append(tip);
+function showTip(e, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  tip.style.left = (e.clientX + 14 + w > innerWidth ? e.clientX - 14 - w : e.clientX + 14) + "px";
+  tip.style.top = Math.min(e.clientY + 12, innerHeight - h - 8) + "px";
+}
+const hideTip = () => { tip.hidden = true; };
+
+fetch("galaxy.json", { cache: "no-cache" }).then((r) => r.json()).then((data) => {
+  const M = data.measures, YEARS = data.years, LAST = YEARS[YEARS.length - 1];
+  M.forEach((m, i) => { m.i = i; });
+  const C = data.categories, OTHER = C.findIndex((c) => c.name === "Other");   // Other: grey, not placed on Priorities
+  C.forEach((c) => { c.colour = COLOURS[c.name] || "#858c96"; c.short = c.name.split(/ & |, /)[0]; });
+
+  let year = LAST, view = "map";                     // opens on the Map, at the latest budget
+  let pinned = null, hovered = null, focus = null, focusStuck = false;
+  const saving = (m) => m.money != null && m.money < 0;
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // each budget weighed by its money: shares of new spending and of savings by theme, the label, the concentration
+  // ------------------------------------------------------------------------------------------------------------------
+  function weigh(yv) {
+    const list = M.filter((m) => m.year === yv);
+    const costed = list.filter((m) => m.money != null).length;
+    const v = C.map((c) => d3.sum(list, (m) => (m.cat === c.id ? Math.max(0, m.money || 0) : 0)));
+    const sv = C.map((c) => d3.sum(list, (m) => (m.cat === c.id ? Math.max(0, -(m.money || 0)) : 0)));
+    const tot = d3.sum(v), stot = d3.sum(sv), s = v.map((a) => (tot ? a / tot : 0)), ss = sv.map((a) => (stot ? a / stot : 0));
+    const order = d3.range(C.length).sort((a, b) => s[b] - s[a]), sorder = d3.range(C.length).sort((a, b) => ss[b] - ss[a]);
+    const top = s[order[0]];
+    return { list, n: list.length, costed, ok: costed >= 0.4 * list.length, tot, v, s, order, stot, sv, ss, sorder,
+             eff: 1 / d3.sum(s, (a) => a * a), kind: top >= CUT_FOCUSED ? "focused" : top >= CUT_LEANING ? "leaning" : "broad" };
+  }
+  const WEIGHED = new Map(YEARS.map((v) => [v, weigh(v)]));
+  const okYear = (v) => WEIGHED.get(v).ok;           // Gravity and Priorities weigh a budget only with its costs matched
+  // priorities, per budget, as computed by 05_chart_data.ipynb (data/priorities.csv): x = money share averaged over the last
+  // three budgets, y = share of this budget's words, quad. Other (index OTHER) and savings (index NC) are not drawn; the
+  // lines sit at 1 in 14
+  const NC = C.length, FAIR = 1 / (NC - (OTHER >= 0 ? 1 : 0));
+  const PRI = new Map(Object.entries(data.priorities).map(([v, p]) => [+v, p]));
+  const COSTED = YEARS.filter((v) => PRI.has(v));
+  if (COSTED.join() !== YEARS.filter(okYear).join()) console.warn("Priorities budgets differ from the budgets weighed here");
+  const THEMES = d3.range(NC).filter((k) => k !== OTHER);
+  const winText = (p) => (p.win.length > 1 ? `Budgets ${p.win[0]}–${p.win[p.win.length - 1]}` : `Budget ${p.win[0]}`);
+  const X_MAX = Math.max(0.25, 1.05 * d3.max(COSTED, (v) => d3.max(THEMES, (k) => PRI.get(v).x[k])));
+  const Y_MAX = Math.max(0.25, 1.05 * d3.max(COSTED, (v) => d3.max(THEMES, (k) => PRI.get(v).y[k])));
+  const MONEY_MAX = d3.max(COSTED, (v) => d3.max(THEMES, (k) => WEIGHED.get(v).v[k]));   // the largest bubble of any budget
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // the chart: soft theme areas, dots, theme names; in the Gravity view, the names and captions of the two masses; in the
+  // Priorities view, the grid, one bubble per theme, a picked theme's path and the names
+  // ------------------------------------------------------------------------------------------------------------------
+  const box = document.getElementById("map");
+  const svg = d3.select(box).append("svg");
+  svg.append("defs").html(`<filter id="soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5"/></filter>`);
+  const g = svg.append("g");
+  const gAreas = g.append("g").attr("class", "layer").attr("filter", "url(#soft)"), gLinks = g.append("g"),
+        gPriBack = g.append("g").attr("class", "layer"), gDots = g.append("g"),
+        gPriBub = g.append("g"), gPriPath = g.append("g").attr("class", "layer"),
+        gLabels = g.append("g").attr("class", "layer"), gTags = g.append("g").attr("class", "layer"),
+        gPriFront = g.append("g").attr("class", "layer"), gHover = g.append("g");
+  const r = d3.scaleSqrt([0, 30], [2.3, 17]).clamp(true);
+  let W = 0, H = 0, x, y, sz = 1;
+  const rad = (m) => (m.money != null ? r(Math.abs(m.money)) : 2.3) * sz;
+  // Gravity: dot area in proportion to the money (no cap, a small floor), so a budget's masses weigh what its money weighs
+  const radG = (m) => (m.money == null ? 1.6 : Math.max(1.6, 3.1 * Math.sqrt(Math.abs(m.money)))) * sz;
+
+  const dots = gDots.selectAll("circle").data(M.slice().sort((a, b) => Math.abs(b.money || 0) - Math.abs(a.money || 0))).join("circle").attr("class", "dot");
+  const labels = gLabels.selectAll("text").data(C).join("text")
+    .attr("text-anchor", "middle").attr("font-weight", 600)
+    .attr("fill", (c) => d3.color(c.colour).darker(1.1)).attr("stroke", "#fdfcfa").attr("paint-order", "stroke");
+
+  // selected = in the chosen budget (and in the chosen theme, if one is picked); everything else fades right back.
+  // In the Gravity and Priorities views only the chosen budget's measures are shown
+  const inYear = (m) => m.year === year;
+  const lit = (m) => inYear(m) && (focus == null || m.cat === focus);
+  const gravOn = () => view === "gravity" && okYear(year);
+  const priOn = () => view === "priorities" && okYear(year);
+  const arranged = () => gravOn() || priOn();         // the dots are gathered (Gravity or Priorities): only this budget's show
+  // (in Priorities the budget's spending dots shrink into their theme's bubble; Other and savings sit out)
+  const shown = (m) => !arranged() || (inYear(m) && !(priOn() && (m.cat === OTHER || saving(m))));
+  const isPin = (m) => pinned && (m === pinned || pinned.near.some(([j]) => j === m.i));
+  // colour: every theme on the map; in the Gravity view only those with 5% or more of their mass's money (or the one picked)
+  const strong = (m) => { const w = WEIGHED.get(year); return m.cat !== OTHER && (saving(m) ? w.ss : w.s)[m.cat] >= COLOUR_MIN; };
+  const hue = (m) => {
+    if (focus === m.cat || !arranged() || priOn()) return C[m.cat].colour;
+    return strong(m) ? C[m.cat].colour : null;
+  };
+  const dotFill = (m, on) => (!on ? (saving(m) ? "none" : OFF)
+    : saving(m) ? (hue(m) ? d3.interpolateRgb("#fff", hue(m))(0.18) : GREY_TINT) : hue(m) || GREY);
+  const dotStroke = (m, on) => (m === pinned ? INK : saving(m) ? (on ? hue(m) || GREY_RING : OFF) : on ? "#fff" : "none");
+  function paint() {
+    const on = (m) => lit(m) || isPin(m), grav = gravOn(), arr = arranged();
+    dots.attr("fill", (m) => dotFill(m, on(m))).attr("stroke", (m) => dotStroke(m, on(m)))
+      .attr("stroke-width", (m) => (m === pinned ? 2 : saving(m) ? 1.8 : arr ? 1 : 0.6))
+      .style("opacity", (m) => (!shown(m) ? 0 : on(m) ? 1 : 0.28));
+    dots.filter(lit).raise();
+    if (pinned) dots.filter(isPin).raise();
+    // lines: the clicked measure's closest earlier measures (dashed), on the map only
+    const lines = pinned && !arr ? pinned.near.map(([j]) => ({ a: pinned, b: M[j] })) : [];
+    gLinks.selectAll("line").data(lines).join("line")
+      .attr("x1", (l) => x(l.a.x)).attr("y1", (l) => y(l.a.y)).attr("x2", (l) => x(l.b.x)).attr("y2", (l) => y(l.b.y))
+      .attr("stroke", INK_SOFT).attr("stroke-opacity", 0.75).attr("stroke-width", 1.1).attr("stroke-dasharray", "3 2");
+    gAreas.selectAll("path").attr("fill-opacity", (s) => (focus == null ? 0.27 : s.c.id === focus ? 0.4 : 0.06));
+    labels.attr("opacity", (c) => (focus == null || c.id === focus ? 1 : 0.25));
+    gTags.selectAll("g.tg").attr("opacity", (t) => (focus == null || t.c.id === focus ? 1 : 0.25));
+    gAreas.style("opacity", arr ? 0 : 1); gLabels.style("opacity", arr ? 0 : 1);
+    if (!grav) gTags.interrupt("show").style("opacity", 0);
+    // Priorities: a picked theme stays, the others fade, and its path across the budgets is drawn
+    gPriBub.selectAll("circle.pb").attr("opacity", (b) => (focus == null || b.k === focus ? 1 : 0.13));
+    gPriFront.selectAll("g.pl").attr("opacity", (l) => (focus == null || l.k === focus ? 1 : 0.18));
+    drawPath();
+    document.querySelectorAll(".cat").forEach((b) => b.classList.toggle("on", +b.dataset.id === focus));
+  }
+
+  const narrow = () => W < 600;
+  function layout() {
+    W = box.clientWidth;
+    H = Math.round(narrow() ? Math.min(780, Math.max(560, W * 1.5)) : Math.min(760, Math.max(440, W * 0.66)));
+    svg.attr("width", W).attr("height", H);
+    const pad = 26;
+    x = d3.scaleLinear([0, 1], [pad, W - pad]); y = d3.scaleLinear([0, 1], [H - pad, pad]);
+    sz = Math.max(0.5, Math.min(1, W / 1000));
+    sizedFor = null;                                 // the dot sizes are fitted again (new size, or the fonts have loaded)
+    drawAreas();
+    gather();
+    move(false);
+    decor();
+  }
+  // each theme's area: a smoothed density of its dots, cut at about a fifth of its peak. Only the patch holding most of the
+  // theme's measures is kept, plus any other holding a quarter or more of them (a second real home, not a stray clump)
+  function drawAreas() {
+    const geo = d3.geoPath(), bw = Math.max(14, 0.028 * W);
+    const shapes = C.map((c) => {
+      const pts = M.filter((m) => m.cat === c.id);
+      const cs = d3.contourDensity().x((m) => x(m.x)).y((m) => y(m.y)).size([W, H]).bandwidth(bw).thresholds(20)(pts);
+      const peak = cs[cs.length - 1].value;
+      const shape = cs.find((s) => s.value >= peak * 0.3) || cs[0];
+      const counted = shape.coordinates.map((poly) => ({ poly, n: pts.filter((m) => d3.polygonContains(poly[0], [x(m.x), y(m.y)])).length }));
+      const most = d3.max(counted, (p) => p.n);
+      const keep = counted.filter((p) => p.n === most || p.n >= 0.25 * pts.length);
+      return { c, shape: { type: "MultiPolygon", coordinates: keep.map((p) => p.poly) } };
+    });
+    gAreas.selectAll("path").data(shapes).join("path").attr("d", (s) => geo(s.shape)).attr("fill", (s) => s.c.colour);
+    spreadLabels();
+  }
+  // names sit on each theme's anchor (its densest spot); names that would overlap are pushed apart, a few rounds
+  function spreadLabels() {
+    const fs = narrow() ? 10.5 : 12.5, font = `600 ${fs}px IBM Plex Sans`;
+    const items = C.map((c) => ({ c, px: x(c.ax), py: y(c.ay), w: textWidth(narrow() ? c.short : c.name, font) + 6, h: fs + 3 }));
+    for (let round = 0; round < 40; round++) {
+      let moved = false;
+      for (let a = 0; a < items.length; a++) for (let b = a + 1; b < items.length; b++) {
+        const A = items[a], B = items[b];
+        const ox = (A.w + B.w) / 2 - Math.abs(A.px - B.px), oy = (A.h + B.h) / 2 - Math.abs(A.py - B.py);
+        if (ox > 0 && oy > 0) { const s = (A.py <= B.py ? -1 : 1) * (oy / 2 + 0.5); A.py += s; B.py -= s; moved = true; }
+      }
+      if (!moved) break;
+    }
+    items.forEach((it) => {
+      it.px = Math.max(it.w / 2 + 4, Math.min(W - it.w / 2 - 4, it.px)); it.py = Math.max(16, Math.min(H - 6, it.py));
+      it.c.lx = x.invert(it.px); it.c.ly = y.invert(it.py);
+    });
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // gravity: the selected budget's new spending falls into one mass; under it, a second mass of the measures that save or
+  // raise money (what pays for it). In each, every theme is pulled toward its own spot: in the direction of its area on the
+  // map, and the nearer the centre the bigger its share of that mass's money (50% or more: the very centre; nothing: the rim).
+  // The dots push each other apart and settle, so the colour at the core is the budget's focus
+  // ------------------------------------------------------------------------------------------------------------------
+  let GROW = 1, tags = [], caps = [];
+  const parts = (list) => ({ spend: list.filter((m) => !saving(m)), save: list.filter(saving) });
+  const tagSize = (s, part) => (narrow() ? 9.5 + 5 * Math.sqrt(Math.min(s, 0.5) / 0.5) : 11 + 9 * Math.sqrt(Math.min(s, 0.5) / 0.5)) * (part === "save" ? 0.88 : 1);
+  const tagText = (t) => (narrow() ? t.c.short : `${t.c.name} ${share(t.s)}`);
+  const tagFont = (t) => `${t.lead ? 700 : 600} ${t.fs}px IBM Plex Sans`;
+  const tagW = (t) => Math.max(textWidth(tagText(t), tagFont(t)), narrow() ? textWidth(share(t.s), tagFont(t)) : 0);
+  const tagH = (t) => (narrow() ? 2.15 : 1) * t.fs;
+  const capFs = () => (narrow() ? 10.5 : 12), capH = () => capFs() + 12;
+  // a mass's radius: the dots' total area, at the density this pile of circles of mixed sizes reaches (about 62%)
+  const massR = (list, grow) => Math.sqrt(d3.sum(list, (m) => (radG(m) * grow + 0.6) ** 2) / 0.62);
+  // the names of one mass: themes with 5% or more of its money (on narrow maps the three, or two, largest)
+  function names(v, part) {
+    const w = WEIGHED.get(v), s = part === "save" ? w.ss : w.s, order = part === "save" ? w.sorder : w.order;
+    return order.filter((i) => s[i] >= COLOUR_MIN && i !== OTHER).slice(0, narrow() ? (part === "save" ? 2 : 3) : 99)
+      .map((i, j) => ({ c: C[i], s: s[i], part, lead: j === 0, fs: tagSize(s[i], part) }));
+  }
+  // one mass, laid out round (0, 0): returns its rim and each theme's direction
+  function layMass(list, s, order, hold, ticks = 430) {
+    const nodes = list.map((m) => ({ m, r: radG(m) * GROW + 0.6 }));
+    if (!nodes.length) return { nodes, rim: 0, rx: 0, ry: 0, spot: [] };
+    const R = Math.sqrt(d3.sum(nodes, (n) => n.r * n.r) / 0.62);
+    const spot = C.map((c) => {
+      const dx = x(c.ax) - x(0.5), dy = y(c.ay) - y(0.5), len = Math.hypot(dx, dy) || 1, d = dist(s[c.id]) * 0.9 * R;
+      return { ux: dx / len, uy: dy / len, x: d * dx / len, y: d * dy / len };
+    });
+    // start: each theme's dots in a small spiral round its spot (no randomness, so a budget always settles the same way)
+    const seen = C.map(() => 0);
+    nodes.sort((a, b) => b.r - a.r).forEach((n) => {
+      const j = seen[n.m.cat]++, p = spot[n.m.cat], a = j * 2.39996, rr = 2.6 * Math.sqrt(j) * (n.r + 1.5);
+      n.x = p.x + rr * Math.cos(a); n.y = p.y + rr * Math.sin(a);
+    });
+    // a focused or leaning mass: its lead theme's biggest measure is held at the very centre, so the focus owns the core
+    if (hold) { const a = d3.greatest(nodes.filter((n) => n.m.cat === order[0]), (n) => n.r); a.fx = 0; a.fy = 0; }
+    // pulls: toward the theme's spot, harder the bigger its share, and a little toward the centre
+    const pull = (n) => 0.05 + 0.35 * s[n.m.cat];
+    const sim = d3.forceSimulation(nodes).alphaDecay(0.016)
+      .force("sx", d3.forceX((n) => spot[n.m.cat].x).strength(pull)).force("sy", d3.forceY((n) => spot[n.m.cat].y).strength(pull))
+      .force("cx", d3.forceX(0).strength(0.035)).force("cy", d3.forceY(0).strength(0.035))
+      .force("hit", d3.forceCollide((n) => n.r + 0.4).strength(0.9).iterations(3)).stop();
+    for (let i = 0; i < ticks; i++) sim.tick();
+    // centre the mass on its own box (the core can sit off-centre in a lopsided mass); rx, ry: its half width and height
+    const x0 = d3.min(nodes, (n) => n.x - n.r), x1 = d3.max(nodes, (n) => n.x + n.r);
+    const y0 = d3.min(nodes, (n) => n.y - n.r), y1 = d3.max(nodes, (n) => n.y + n.r);
+    nodes.forEach((n) => { n.x -= (x0 + x1) / 2; n.y -= (y0 + y1) / 2; });
+    return { nodes, spot, rx: (x1 - x0) / 2, ry: (y1 - y0) / 2, rim: Math.max(x1 - x0, y1 - y0) / 2 };
+  }
+  // narrow maps: which names go above the spending mass and which below (by the side their dots are on); savings names go below
+  function rowsFor(ns, nv, S) {
+    const dirOf = (t) => { const pts = S.nodes.filter((n) => n.m.cat === t.c.id), my = d3.mean(pts, (n) => n.y);
+      return Math.abs(my) > 0.25 * S.rim ? Math.sign(my) : (S.spot[t.c.id].uy < 0 ? -1 : 1); };
+    ns.forEach((t) => { t.vert = dirOf(t); }); nv.forEach((t) => { t.vert = 1; });
+    const gapRow = (h) => (h ? h + 10 : 4);
+    const hUp = d3.max(ns.filter((t) => t.vert < 0), tagH) || 0, hDown = d3.max(ns.filter((t) => t.vert > 0), tagH) || 0;
+    const hSave = d3.max(nv, tagH) || 0;
+    return { hUp, hDown, hSave, gapRow, fixed: capH() + gapRow(hUp) + gapRow(hDown) + capH() + gapRow(hSave) };
+  }
+  // both masses of one budget at the current dot size, with their names, and the room they leave unused
+  function lay(v, ticks) {
+    const w = WEIGHED.get(v), p = parts(w.list);
+    const S = layMass(p.spend, w.s, w.order, w.kind !== "broad", ticks);
+    const V = layMass(p.save, w.ss, w.sorder, w.ss[w.sorder[0]] >= CUT_LEANING, ticks);
+    const ns = names(v, "spend"), nv = names(v, "save");
+    if (narrow()) {
+      const rows = rowsFor(ns, nv, S);
+      return { w, S, V, ns, nv, rows, fitH: (H - 8 - rows.fixed) / (2 * S.ry + 2 * V.ry), fitW: (W / 2 - 8) / Math.max(S.rx, V.rx) };
+    }
+    const ws = d3.max(ns, tagW) || 0, wv = d3.max(nv, tagW) || 0;
+    return { w, S, V, ns, nv, fitH: (H - 8 - 2 * capH() - 26) / (2 * S.ry + 2 * V.ry),
+             fitW: Math.min((W / 2 - 34 - ws) / S.rx, V.rx ? (W / 2 - 34 - wv) / V.rx : Infinity) };
+  }
+  // one dot size for every budget: a first guess from the dots' total area, then every budget laid out at that size and the
+  // size scaled so the largest pair of masses (with its names) fills the chart. A budget with more money makes bigger masses
+  let sizedFor = null;
+  function sizeUp() {
+    const key = `${W}x${H}`;
+    if (sizedFor === key) return;
+    sizedFor = key;
+    const guess = (v) => {
+      const p = parts(WEIGHED.get(v).list), rs = massR(p.spend, 1), rv = massR(p.save, 1);
+      return Math.min((H - 160) / (2 * rs + 2 * rv), (W / 2 - (narrow() ? 8 : 260)) / rs);
+    };
+    GROW = clamp(d3.min(YEARS.filter(okYear), guess), 0.25, 12);
+    // a quicker settle is enough to measure; the masses grow in step with the dot size, the names and captions don't
+    const f = d3.min(YEARS.filter(okYear), (v) => { const L = lay(v, 240); return Math.min(L.fitH, L.fitW); });
+    GROW = clamp(GROW * f * 0.97, 0.25, 12);
+  }
+  function gather() {
+    M.forEach((m) => { m.gx = m.gy = m.gr = null; });
+    tags = []; caps = []; priBubbles = []; priLabels = [];
+    if (priOn()) { gatherPri(); return; }
+    if (!gravOn()) return;
+    sizeUp();
+    const { w, S, V, ns, nv, rows: R0 } = lay(year), cx = W / 2;
+    // where things sit, top to bottom
+    let cyS, cyV;
+    const rows = {};
+    if (narrow()) {
+      const { hUp, hDown, hSave, gapRow } = R0;
+      const total = capH() + gapRow(hUp) + 2 * S.ry + gapRow(hDown) + (V.rim ? capH() + 2 * V.ry + gapRow(hSave) : 0);
+      let at = Math.max(4, (H - total) / 2);
+      caps.push({ id: "spend", y: at + capFs(), text: `New spending · ${money$(w.tot)}` }); at += capH();
+      rows.up = at + hUp / 2; at += gapRow(hUp);
+      cyS = at + S.ry; at += 2 * S.ry;
+      rows.down = at + 4 + hDown / 2; at += gapRow(hDown);
+      if (V.rim) {
+        caps.push({ id: "save", y: at + capFs(), text: `Savings and money raised · ${money$(w.stot)}` }); at += capH();
+        cyV = at + V.ry; at += 2 * V.ry; rows.save = at + 4 + hSave / 2;
+      }
+    } else {
+      const total = capH() + 2 * S.ry + (V.rim ? 26 + capH() + 2 * V.ry : 0);
+      let at = Math.max(4, (H - total) / 2);
+      caps.push({ id: "spend", y: at + capFs(), text: `New spending · ${money$(w.tot)}` }); at += capH();
+      cyS = at + S.ry; at += 2 * S.ry + 26;
+      if (V.rim) { caps.push({ id: "save", y: at + capFs(), text: `Paid for by: savings and money raised · ${money$(w.stot)}` }); at += capH(); cyV = at + V.ry; }
+    }
+    S.nodes.forEach((n) => { n.m.gx = cx + n.x; n.m.gy = cyS + n.y; n.m.gr = n.r - 0.6; });
+    V.nodes.forEach((n) => { n.m.gx = cx + n.x; n.m.gy = cyV + n.y; n.m.gr = n.r - 0.6; });
+    placeTags(ns, S, cx, cyS, rows.up, rows.down, cyS - S.ry - 4, V.rim ? cyV - V.ry - capH() : H - 6);
+    placeTags(nv, V, cx, cyV, null, rows.save, cyV - V.ry - 2, H - 6);
+    tags = [...ns, ...nv];
+  }
+  // the names of one mass. Wide charts: two columns beside the mass (pie-chart style), each name level with the edge of its
+  // dots, kept in the order of those edges so the leader lines never cross. Narrow charts: a row above or below the mass
+  function placeTags(list, mass, cx, cy, rowUp, rowDown, top, bottom) {
+    if (!list.length) return;
+    const rim = mass.rim;
+    list.forEach((t) => {
+      t.key = t.part + t.c.id;
+      const pts = mass.nodes.filter((n) => n.m.cat === t.c.id);
+      const mx = d3.mean(pts, (n) => n.x), my = d3.mean(pts, (n) => n.y), off = Math.hypot(mx, my);
+      if (narrow()) {
+        const e = d3.greatest(pts, (n) => t.vert * n.y + n.r);
+        t.ax = cx + e.x; t.ay = cy + e.y + t.vert * e.r; t.anchor = "middle";
+        t.y = t.vert < 0 ? rowUp : rowDown; t.x = t.ax;
+      } else {
+        t.side = (off > 0.25 * rim ? mx : mass.spot[t.c.id].ux) >= 0 ? 1 : -1;
+        const e = d3.greatest(pts, (n) => t.side * n.x + n.r);   // its dot reaching furthest toward that side
+        t.ax = cx + e.x + t.side * e.r; t.ay = cy + e.y; t.anchor = t.side > 0 ? "start" : "end";
+        t.y = t.ay; t.x = t.side > 0 ? Math.min(cx + mass.rx + 24, W - 6 - tagW(t)) : Math.max(cx - mass.rx - 24, 6 + tagW(t));
+      }
+    });
+    if (narrow()) {
+      // each row: names in the order of their dots, pushed apart sideways, kept inside the chart
+      [-1, 1].forEach((vert) => {
+        const row = list.filter((t) => t.vert === vert).sort((a, b) => a.ax - b.ax);
+        row.forEach((t) => { t.x = clamp(t.ax, tagW(t) / 2 + 4, W - tagW(t) / 2 - 4); });
+        for (let i = 1; i < row.length; i++) {
+          const gap = (tagW(row[i - 1]) + tagW(row[i])) / 2 + 10;
+          if (row[i].x - row[i - 1].x < gap) row[i].x = row[i - 1].x + gap;
+        }
+        const over = row.length ? row[row.length - 1].x + tagW(row[row.length - 1]) / 2 - (W - 4) : 0;
+        if (over > 0) row.forEach((t) => { t.x -= over; });
+      });
+      list.forEach((t) => { t.path = `M${t.ax},${t.ay}L${t.x},${t.y - t.vert * (tagH(t) / 2 + 2)}`; });
+      return;
+    }
+    // each column: names in the order of their dots' edges, at least a line apart, inside the mass's band
+    [-1, 1].forEach((side) => {
+      const col = list.filter((t) => t.side === side).sort((a, b) => a.ay - b.ay);
+      for (let round = 0; round < 4; round++) {
+        for (let i = 1; i < col.length; i++) {
+          const gap = (tagH(col[i - 1]) + tagH(col[i])) / 2 + 5;
+          if (col[i].y - col[i - 1].y < gap) col[i].y = col[i - 1].y + gap;
+        }
+        const over = col.length ? col[col.length - 1].y + tagH(col[col.length - 1]) / 2 - bottom : 0;
+        if (over > 0) col.forEach((t) => { t.y -= over; });
+        const under = col.length ? top - (col[0].y - tagH(col[0]) / 2) : 0;
+        if (under > 0) col.forEach((t) => { t.y += under; });
+      }
+    });
+    list.forEach((t) => {
+      const bend = cx + t.side * (mass.rx + 12);
+      t.path = `M${t.ax},${t.ay}L${bend},${t.y}L${t.x - t.side * 4},${t.y}`;
+    });
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // priorities: one bubble per theme. Across (money): its average share of new spending over the last three budgets, each
+  // budget counted equally; up (rhetoric): its share of this budget's words; size: what this budget puts into it. Lines at
+  // 7% (an even share among 14 themes) make four corners: Main, Emerging, Fading, Low priority. Savings are left out
+  // ------------------------------------------------------------------------------------------------------------------
+  let priBubbles = [], priLabels = [], priAxes = null, priShown = false;
+  const plot = () => (narrow() ? { l: 50, r: 10, t: 16, b: 58 } : { l: 74, r: 22, t: 20, b: 64 });
+  const QUADS = [
+    { n: "Main", d: "funded and talked about", top: true, end: true },
+    { n: "Emerging", d: "talked up, money yet to follow", top: true, end: false },
+    { n: "Fading", d: "still funded, talked about less", top: false, end: true },
+    { n: "Low priority", d: "neither", top: false, end: false }];
+  const QNAME = { "Main": "main priority", "Emerging": "emerging", "Fading": "fading", "Low priority": "low priority" };
+  function gatherPri() {
+    const P = plot(), p = PRI.get(year), w = WEIGHED.get(year);
+    const xs = d3.scaleSqrt([0, X_MAX], [P.l, W - P.r]), ys = d3.scaleSqrt([0, Y_MAX], [H - P.b, P.t]);
+    priAxes = { xs, ys, P };
+    // bubble area in proportion to the money, on one scale for every budget: the largest of any budget gets maxR
+    const maxR = Math.min(W, H) * (narrow() ? 0.085 : 0.075);
+    const rB = d3.scaleSqrt([0, MONEY_MAX], [0, maxR]);
+    priBubbles = THEMES.map((k) => ({ k, x: xs(p.x[k]), y: ys(p.y[k]), R: Math.max(3.5, rB(w.v[k])) }));
+    // every measure glides into its theme's bubble and shrinks away (Other and savings: to the middle, already hidden)
+    const at = new Map(priBubbles.map((b) => [b.k, b]));
+    M.forEach((m) => { const b = at.get(m.cat); m.gx = b ? b.x : (P.l + W - P.r) / 2; m.gy = b ? b.y : (P.t + H - P.b) / 2; m.gr = 0; });
+    placePriLabels();
+  }
+  // the four corner names: big, with what they mean underneath (wide charts only)
+  function quadSpots() {
+    const { P } = priAxes, x1 = W - P.r, y1 = H - P.b, sm = narrow(), fq = sm ? 13 : 17, fd = 11.5;
+    return QUADS.map((q) => {
+      const tx = q.end ? x1 - 8 : P.l + 8;
+      const ny = q.top ? P.t + fq + 2 : sm ? y1 - 8 : y1 - 8 - fd - 4, dy = ny + fd + 4;
+      const wMax = Math.max(textWidth(q.n, `700 ${fq}px IBM Plex Sans`), sm ? 0 : textWidth(q.d, `400 ${fd}px IBM Plex Sans`));
+      const bx = q.end ? tx - wMax : tx;
+      return { ...q, anchor: q.end ? "end" : "start", tx, ny, dy, fq, fd, sm, box: { x0: bx, y0: ny - fq, x1: bx + wMax, y1: (sm ? ny : dy) + 3 } };
+    });
+  }
+  // each bubble's name: the first of eight spots round it (right, left, above, below, the diagonals; close, then further
+  // out with a thin line) that clears the other names, the bubbles and the corner names; the biggest bubbles choose first
+  function placePriLabels() {
+    const { P } = priAxes, sm = narrow(), fs = sm ? 10.5 : 12, font = `600 ${fs}px IBM Plex Sans`, h = fs + 2;
+    const area = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+    const corners = quadSpots().map((q) => q.box);
+    const circles = priBubbles.map((b) => ({ k: b.k, x0: b.x - b.R, y0: b.y - b.R, x1: b.x + b.R, y1: b.y + b.R }));
+    const placed = [];
+    priLabels = [];
+    priBubbles.slice().sort((a, b) => b.R - a.R).forEach((b) => {
+      const text = sm ? C[b.k].short : C[b.k].name, w = textWidth(text, font) + 2;
+      let best = null;
+      [3, 12, 26].forEach((d, di) => {
+        const rr = b.R + d, dg = rr * 0.72;
+        [[b.x + rr, b.y - h / 2], [b.x - rr - w, b.y - h / 2], [b.x - w / 2, b.y - rr - h], [b.x - w / 2, b.y + rr],
+         [b.x + dg, b.y - dg - h], [b.x + dg, b.y + dg], [b.x - dg - w, b.y - dg - h], [b.x - dg - w, b.y + dg]].forEach(([lx, ly], ci) => {
+          const bx = { x0: lx, y0: ly, x1: lx + w, y1: ly + h };
+          let s = di * 30 + ci * 2;
+          placed.forEach((o) => { s += 6 * area(bx, o); });
+          corners.forEach((o) => { s += 3 * area(bx, o); });
+          circles.forEach((o) => { if (o.k !== b.k) s += 1.5 * area(bx, o); });
+          s += 400 * (Math.max(0, P.l - bx.x0) + Math.max(0, bx.x1 - (W - 3)) + Math.max(0, P.t - 6 - bx.y0) + Math.max(0, bx.y1 - (H - P.b)));
+          if (!best || s < best.s) best = { s, bx, d };
+        });
+      });
+      placed.push(best.bx);
+      // a thin line from the bubble's edge to the name when the name sits further out
+      const nx = clamp(b.x, best.bx.x0, best.bx.x1), ny = clamp(b.y, best.bx.y0, best.bx.y1), len = Math.hypot(nx - b.x, ny - b.y) || 1;
+      priLabels.push({ k: b.k, text, fs, x: best.bx.x0 + 1, y: best.bx.y0 + fs * 0.82 + 1, box: best.bx, lead: best.d > 3,
+                       l1x: b.x + (nx - b.x) / len * b.R, l1y: b.y + (ny - b.y) / len * b.R, l2x: nx, l2y: ny });
+    });
+  }
+  // the grid behind the bubbles: axes, the two lines at an even share, the corner names, ticks and the axis names
+  function drawPriBack() {
+    gPriBack.selectAll("*").remove();
+    const { xs, ys, P } = priAxes, fx = xs(FAIR), fy = ys(FAIR), x1 = W - P.r, y1 = H - P.b, sm = narrow();
+    gPriBack.append("line").attr("x1", P.l).attr("x2", x1).attr("y1", y1).attr("y2", y1).attr("stroke", "#d9d4cb");
+    gPriBack.append("line").attr("x1", P.l).attr("x2", P.l).attr("y1", P.t).attr("y2", y1).attr("stroke", "#d9d4cb");
+    gPriBack.append("line").attr("x1", fx).attr("x2", fx).attr("y1", P.t).attr("y2", y1);
+    gPriBack.append("line").attr("x1", P.l).attr("x2", x1).attr("y1", fy).attr("y2", fy);
+    gPriBack.selectAll("line:nth-child(n+3)").attr("stroke", "#a8a297").attr("stroke-width", 1).attr("stroke-dasharray", "4 3");
+    quadSpots().forEach((q) => {
+      gPriBack.append("text").attr("x", q.tx).attr("y", q.ny).attr("text-anchor", q.anchor).attr("font-size", q.fq + "px")
+        .attr("font-weight", 700).attr("fill", "#4a453f").attr("letter-spacing", "-0.01em").text(q.n);
+      if (!q.sm) gPriBack.append("text").attr("x", q.tx).attr("y", q.dy).attr("text-anchor", q.anchor).attr("font-size", q.fd + "px")
+        .attr("fill", "#8b857b").text(q.d);
+    });
+    const tick = (t) => t.attr("font-size", "10px").attr("fill", "#8b857b");
+    [0.02, FAIR, 0.15, 0.25, 0.4].filter((v) => v <= X_MAX).forEach((v) =>
+      tick(gPriBack.append("text").attr("x", xs(v)).attr("y", y1 + 14).attr("text-anchor", "middle").text(v === FAIR ? "7%" : pct(v))));
+    [0.02, FAIR, 0.15, 0.3].filter((v) => v <= Y_MAX).forEach((v) =>
+      tick(gPriBack.append("text").attr("x", P.l - 6).attr("y", ys(v) + 3.5).attr("text-anchor", "end").text(v === FAIR ? "7%" : pct(v))));
+    // the axis names: big, with what they measure in a smaller line
+    const big = sm ? 13 : 15, small = sm ? 10.5 : 11.5;
+    const xt = gPriBack.append("text").attr("x", (P.l + x1) / 2).attr("y", y1 + (sm ? 31 : 34)).attr("text-anchor", "middle");
+    xt.append("tspan").attr("font-size", big + "px").attr("font-weight", 700).attr("fill", INK).text("Money →");
+    xt.append("tspan").attr("x", (P.l + x1) / 2).attr("dy", small + 4).attr("font-size", small + "px").attr("fill", MUTED)
+      .text(sm ? "share of new spending, last 3 budgets" : "share of new spending, last three budgets");
+    const yt = gPriBack.append("g").attr("transform", `translate(${sm ? 13 : 18},${(P.t + y1) / 2}) rotate(-90)`);
+    yt.append("text").attr("text-anchor", "middle").attr("font-size", big + "px").attr("font-weight", 700).attr("fill", INK).text("Rhetoric →");
+    yt.append("text").attr("y", small + 4).attr("text-anchor", "middle").attr("font-size", small + "px").attr("fill", MUTED)
+      .text(sm ? "how much it is talked about" : "how much the budget talks about it");
+  }
+  // the bubbles and their names: they grow in when the view opens, and glide from budget to budget
+  function drawPri(animate) {
+    if (!priOn()) {
+      if (priShown) {
+        gPriBub.selectAll("circle.pb").interrupt("pri").transition("pri").duration(animate ? 450 : 0).attr("r", 0);
+        gPriBack.style("opacity", 0); gPriPath.style("opacity", 0); gPriFront.interrupt("show").style("opacity", 0);
+      }
+      priShown = false;
+      return;
+    }
+    const entering = !priShown;
+    priShown = true;
+    drawPriBack();
+    gPriBack.style("opacity", 1); gPriPath.style("opacity", 1);
+    const bub = gPriBub.selectAll("circle.pb").data(priBubbles, (b) => b.k)
+      .join((en) => en.append("circle").attr("class", "pb").attr("r", 0).attr("cx", (b) => b.x).attr("cy", (b) => b.y))
+      .attr("fill", (b) => C[b.k].colour).attr("stroke", "#fff").attr("stroke-width", 1.5);
+    bub.sort((a, b) => b.R - a.R);                     // small bubbles on top
+    const glide = (sel) => (animate ? sel.transition("pri").duration(1100).ease(d3.easeCubicInOut) : sel.interrupt("pri"));
+    if (entering) {
+      bub.interrupt("pri").attr("cx", (b) => b.x).attr("cy", (b) => b.y).attr("r", 0);
+      (animate ? bub.transition("pri").delay(550).duration(650).ease(d3.easeCubicOut) : bub).attr("r", (b) => b.R);
+    } else glide(bub).attr("cx", (b) => b.x).attr("cy", (b) => b.y).attr("r", (b) => b.R);
+    const lab = gPriFront.selectAll("g.pl").data(priLabels, (l) => l.k).join((en) => {
+      const gg = en.append("g").attr("class", "pl");
+      gg.append("line"); gg.append("text");
+      return gg;
+    });
+    lab.select("line").attr("stroke", (l) => d3.color(C[l.k].colour).darker(0.6)).attr("stroke-width", 1)
+      .attr("stroke-opacity", (l) => (l.lead ? 0.8 : 0));
+    lab.select("text").attr("font-size", (l) => l.fs + "px").attr("font-weight", 600).attr("text-anchor", "start")
+      .attr("fill", (l) => d3.color(C[l.k].colour).darker(1.1)).attr("stroke", "#fdfcfa").attr("stroke-width", 3.5)
+      .attr("paint-order", "stroke").text((l) => l.text);
+    const still = entering || !animate;
+    (still ? lab.select("line").interrupt("pri") : glide(lab.select("line")))
+      .attr("x1", (l) => l.l1x).attr("y1", (l) => l.l1y).attr("x2", (l) => l.l2x).attr("y2", (l) => l.l2y);
+    (still ? lab.select("text").interrupt("pri") : glide(lab.select("text"))).attr("x", (l) => l.x).attr("y", (l) => l.y);
+    if (entering && animate) gPriFront.style("opacity", 0).transition("show").delay(1000).duration(400).style("opacity", 1);
+    else gPriFront.interrupt("show").style("opacity", 1);
+  }
+  // a picked theme (a click on its bubble, or its row under the chart): its path across the budgets, year by year
+  function drawPath() {
+    const k = priOn() && priShown && focus != null && focus !== OTHER ? focus : null;
+    const pts = k == null ? [] : COSTED.map((v) => ({ v, x: priAxes.xs(PRI.get(v).x[k]), y: priAxes.ys(PRI.get(v).y[k]) }));
+    const col = k == null ? INK : d3.color(C[k].colour).darker(0.6).formatHex();
+    gPriPath.selectAll("path").data(pts.length ? [pts] : []).join("path")
+      .attr("d", d3.line().x((p) => p.x).y((p) => p.y)).attr("fill", "none").attr("stroke", col).attr("stroke-width", 1.6)
+      .attr("stroke-linejoin", "round").attr("stroke-opacity", 0.85);
+    gPriPath.selectAll("circle").data(pts).join("circle").attr("cx", (p) => p.x).attr("cy", (p) => p.y)
+      .attr("r", (p) => (p.v === year ? 4 : 3.2)).attr("fill", col).attr("stroke", "#fff").attr("stroke-width", 1.3);
+    // each year's label on the side away from its neighbours on the path (so it doesn't sit on the line)
+    pts.forEach((p, i) => {
+      let dx = 0, dy = 0;
+      [pts[i - 1], pts[i + 1]].filter(Boolean).forEach((q) => { const l = Math.hypot(q.x - p.x, q.y - p.y) || 1; dx += (q.x - p.x) / l; dy += (q.y - p.y) / l; });
+      let l = Math.hypot(dx, dy);
+      if (l < 0.3) { dx = -(pts[i + 1] || pts[i - 1] || p).y + p.y; dy = (pts[i + 1] || pts[i - 1] || p).x - p.x; l = Math.hypot(dx, dy) || 1; }
+      p.lx = p.x - (dx / l) * 13; p.ly = p.y - (dy / l) * 11 + 3.5;
+    });
+    gPriPath.selectAll("text").data(pts).join("text").attr("x", (p) => p.lx).attr("y", (p) => p.ly).attr("text-anchor", "middle")
+      .attr("font-size", "10.5px").attr("font-weight", (p) => (p.v === year ? 700 : 500)).attr("fill", (p) => (p.v === year ? INK : INK_SOFT))
+      .attr("stroke", "#fdfcfa").attr("stroke-width", 3).attr("paint-order", "stroke").text((p) => p.v);
+  }
+
+  // every dot to where the current view puts it (gliding when asked); the names appear once the dots have landed
+  function move(animate) {
+    M.forEach((m) => { m.px = m.gx != null ? m.gx : x(m.x); m.py = m.gx != null ? m.gy : y(m.y); m.pr = m.gx != null ? m.gr : rad(m); });
+    const sel = animate ? dots.transition("move").duration(1100).ease(d3.easeCubicInOut) : dots.interrupt("move");
+    sel.attr("cx", (m) => m.px).attr("cy", (m) => m.py).attr("r", (m) => m.pr);
+    const tg = gTags.selectAll("g.tg").data(tags, (t) => t.key).join((en) => {
+      const gg = en.append("g").attr("class", "tg");
+      gg.append("path").attr("class", "halo");
+      gg.append("path").attr("class", "lead");
+      gg.append("circle").attr("class", "end");
+      gg.append("text").attr("class", "tag");
+      return gg;
+    });
+    tg.select("path.halo").attr("d", (t) => t.path).attr("fill", "none").attr("stroke", "#fdfcfa").attr("stroke-width", 3).attr("stroke-opacity", 0.9);
+    tg.select("path.lead").attr("d", (t) => t.path).attr("fill", "none").attr("stroke", (t) => d3.color(t.c.colour).darker(0.7)).attr("stroke-width", 1);
+    tg.select("circle.end").attr("cx", (t) => t.ax).attr("cy", (t) => t.ay).attr("r", 2.2).attr("fill", (t) => d3.color(t.c.colour).darker(0.7))
+      .attr("stroke", "#fff").attr("stroke-width", 1);
+    tg.select("text.tag").attr("x", (t) => t.x).attr("y", (t) => t.y).attr("font-size", (t) => t.fs + "px")
+      .attr("text-anchor", (t) => t.anchor).attr("font-weight", (t) => (t.lead ? 700 : 600))
+      .attr("fill", (t) => d3.color(t.c.colour).darker(1.1)).attr("stroke", "#fdfcfa").attr("stroke-width", 3.5).attr("paint-order", "stroke")
+      .each(function (t) {
+        const lines = narrow() ? [tagText(t), share(t.s)] : [tagText(t)];
+        d3.select(this).selectAll("tspan").data(lines).join("tspan").attr("x", t.x)
+          .attr("dy", (d, i) => (i === 0 ? (lines.length > 1 ? "-0.2em" : "0.35em") : "1.1em")).text((d) => d);
+      });
+    gTags.selectAll("text.cap").data(caps, (c) => c.id).join("text").attr("class", "cap")
+      .attr("x", W / 2).attr("y", (c) => c.y).attr("text-anchor", "middle").attr("font-size", capFs() + "px").attr("font-weight", 600)
+      .attr("fill", INK_SOFT).attr("stroke", "#fdfcfa").attr("stroke-width", 3).attr("paint-order", "stroke").text((c) => c.text);
+    if (gravOn()) {
+      if (animate) gTags.style("opacity", 0).transition("show").delay(900).duration(450).style("opacity", 1);
+      else gTags.interrupt("show").style("opacity", 1);
+    }
+    drawPri(animate);
+    hover(null); hoverBubble(null);
+  }
+  function decor() {
+    const fs = narrow() ? 10.5 : 12.5;
+    labels.attr("x", (c) => x(c.lx)).attr("y", (c) => y(c.ly) + fs * 0.35).attr("font-size", fs + "px").attr("stroke-width", 3.5)
+      .text((c) => (narrow() ? c.short : c.name));
+    hover(null);
+    paint();
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // hover: the page finds the dot (or, in Priorities, the bubble) nearest the pointer, outlines it and shows its details at
+  // once. Click a dot: its closest measures in earlier budgets, under the chart. Click a bubble: its path across the budgets
+  // ------------------------------------------------------------------------------------------------------------------
+  function nearest(e) {
+    const [px, py] = d3.pointer(e, g.node());
+    let best = null, bs = Infinity;
+    for (const m of M) {
+      if (!shown(m)) continue;
+      const d = Math.hypot(m.px - px, m.py - py), inside = d <= m.pr + 0.5;
+      if (!inside && d - m.pr > 10) continue;
+      // under the pointer beats near it; a selected dot beats a faded one; among dots under the pointer, the smallest (drawn on top)
+      const s = inside ? (lit(m) ? -200 : -100) + m.pr : d - m.pr - (lit(m) ? 3 : 0);
+      if (s < bs) { bs = s; best = m; }
+    }
+    return best;
+  }
+  function nearestBubble(e) {
+    const [px, py] = d3.pointer(e, g.node());
+    let best = null;
+    priBubbles.forEach((b) => { if (Math.hypot(b.x - px, b.y - py) <= Math.max(b.R, 6) + 3 && (!best || b.R < best.R)) best = b; });
+    if (!best) priLabels.forEach((l) => { const q = l.box; if (px >= q.x0 && px <= q.x1 && py >= q.y0 && py <= q.y1) best = priBubbles.find((b) => b.k === l.k); });
+    return best;
+  }
+  const tipHtml = (m) => `<div class="t">${m.title}</div><div>Budget ${m.year} · ${C[m.cat].name}</div>` +
+    `<div><b>${fmtB(m.money)}</b>${m.money != null ? " over five or six years" : ""}</div>` +
+    (m.reverses ? `<div>Reverses an earlier policy (${m.reverses}); counted under ${C[m.cat].name}, what it does</div>` : "");
+  const bubbleTip = (b) => {
+    const p = PRI.get(year), w = WEIGHED.get(year), k = b.k;
+    return `<div class="t">${C[k].name}</div><div>Budget ${year}: <b>${QNAME[p.quad[k]]}</b></div>` +
+      `<div>Money: ${share(p.x[k])} of new spending, ${winText(p)}</div>` +
+      `<div>Rhetoric: ${share(p.y[k])} of this budget's words</div>` +
+      `<div>In this budget: <b>${w.v[k] ? money$(w.v[k]) : "no new money"}</b></div>` +
+      `<div class="hint">${focusStuck && focus === k ? "Click again to let go" : "Click to follow it across the budgets"}</div>`;
+  };
+  function hover(m, e) {
+    if (m !== hovered) {
+      hovered = m; svg.classed("over", !!m);
+      gHover.selectAll("circle.hd").data(m ? [m] : []).join("circle").attr("class", "hd")
+        .attr("cx", (d) => d.px).attr("cy", (d) => d.py).attr("r", (d) => d.pr + 1)
+        .attr("fill", (d) => dotFill(d, true)).attr("stroke", INK).attr("stroke-width", 2);
+    }
+    if (m && e) showTip(e, tipHtml(m)); else if (!m) hideTip();
+  }
+  function hoverBubble(b, e) {
+    svg.classed("over", !!b || !!hovered);
+    gHover.selectAll("circle.hb").data(b ? [b] : []).join("circle").attr("class", "hb")
+      .attr("cx", (d) => d.x).attr("cy", (d) => d.y).attr("r", (d) => d.R + 1.5).attr("fill", "none").attr("stroke", INK).attr("stroke-width", 2);
+    if (b && e) showTip(e, bubbleTip(b)); else if (!b && !hovered) hideTip();
+  }
+  svg.on("pointermove", (e) => { if (priOn()) hoverBubble(nearestBubble(e), e); else hover(nearest(e), e); })
+    .on("pointerleave", () => { hover(null); hoverBubble(null); })
+    .on("click", (e) => {
+      if (priOn()) {
+        const b = nearestBubble(e);
+        if (!b || (focusStuck && focus === b.k)) { focusStuck = false; focus = null; } else { focusStuck = true; focus = b.k; }
+        paint(); hoverBubble(b, e);
+        return;
+      }
+      const m = nearest(e); pin(m); hover(m, e);
+    });
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // the themes under the chart: legend, money and share per theme for the selected budget, largest first, down the columns
+  // (hover or click a row to pick that theme out)
+  // ------------------------------------------------------------------------------------------------------------------
+  function cats() {
+    const w = WEIGHED.get(year);
+    const rows = C.map((c) => ({ c, n: w.list.filter((m) => m.cat === c.id).length, v: w.v[c.id], s: w.s[c.id] }))
+      .sort((a, b) => b.v - a.v || b.n - a.n);
+    const max = d3.max(rows, (d) => d.v) || 1;
+    document.getElementById("cats-head").innerHTML =
+      `<b>New spending by theme, Budget ${year}</b> · net, over five or six years · share · number of measures`;
+    document.getElementById("cats").replaceChildren(...rows.map((d) => {
+      const b = el("button", "cat"); b.type = "button"; b.dataset.id = d.c.id;
+      const sw = el("span", "sw"); sw.style.background = d.c.colour;
+      const bar = el("span", "bar"), fill = el("i"); fill.style.width = (100 * d.v / max) + "%"; fill.style.background = d.c.colour; bar.append(fill);
+      b.append(sw, el("span", "nm", d.c.name), bar, el("span", "v", d.v ? fmtB(d.v) : "–"),
+        el("span", "sh", w.ok && d.v ? share(d.s) : "–"), el("span", "k", String(d.n)));
+      b.addEventListener("pointerenter", () => { if (!focusStuck) { focus = d.c.id; paint(); } });
+      b.addEventListener("pointerleave", () => { if (!focusStuck) { focus = null; paint(); } });
+      b.addEventListener("click", () => {
+        if (focusStuck && focus === d.c.id) { focusStuck = false; focus = null; } else { focusStuck = true; focus = d.c.id; }
+        paint();
+      });
+      return b;
+    }));
+    paint();
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // click a dot: the three closest measures from earlier budgets (the box shows only after a click)
+  // ------------------------------------------------------------------------------------------------------------------
+  function pin(m) {
+    pinned = m;
+    const box2 = document.getElementById("pinned");
+    box2.replaceChildren();
+    box2.hidden = !m;
+    if (!m) { paint(); return; }
+    const head = el("div"); head.innerHTML = `<b>${m.title}</b> (Budget ${m.year}, ${C[m.cat].name}, ${fmtB(m.money)})`;
+    box2.append(head);
+    if (!m.near.length) box2.append(el("div", null, `Budget ${m.year} is the first on the map: nothing earlier to compare with.`));
+    else {
+      box2.append(el("div", null, "Closest measures in earlier budgets (how alike the wording is, 0 to 1):"));
+      const ol = el("ol");
+      m.near.forEach(([j, s]) => { const li = el("li"); li.innerHTML = `Budget ${M[j].year}: ${M[j].title} <span class="sim">${s.toFixed(2)} · ${C[M[j].cat].name}</span>`; ol.append(li); });
+      box2.append(ol);
+    }
+    paint();
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // on the chart: play, the budgets, the view
+  // ------------------------------------------------------------------------------------------------------------------
+  const yearsBox = document.getElementById("years");
+  const buttons = YEARS.map((v) => {
+    const b = el("button", "yr", String(v)); b.type = "button"; b.dataset.key = v;
+    b.addEventListener("click", () => { stopPlay(); setYear(v); });
+    yearsBox.append(b); return b;
+  });
+  // in the Gravity and Priorities views, budgets without matched costs are greyed out (none, for now)
+  function syncButtons() {
+    buttons.forEach((b) => {
+      const v = +b.dataset.key, off = view !== "map" && !okYear(v);
+      b.setAttribute("aria-pressed", String(v === year));
+      b.disabled = off;
+      b.title = off ? `Only ${WEIGHED.get(v).costed} of Budget ${v}'s ${WEIGHED.get(v).n} measures have a matched cost` : "";
+    });
+  }
+  function setYear(v) {
+    year = v; syncButtons();
+    gather(); move(view !== "map"); decor(); writeHead(); cats();
+  }
+  const segV = document.getElementById("seg-view");
+  const vButtons = [["map", "Map"], ["gravity", "Gravity"], ["priorities", "Priorities"]].map(([key, label]) => {
+    const b = el("button", null, label); b.type = "button"; b.dataset.key = key;
+    b.addEventListener("click", () => { if (key !== view) setView(key); });
+    segV.append(b); return b;
+  });
+  function setView(v) {
+    stopPlay(); view = v;
+    vButtons.forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.key === v)));
+    howto(); playLabel();
+    if (v !== "map" && !okYear(year)) { setYear(LAST); return; }   // weighs one budget with its costs: the latest
+    syncButtons();
+    gather(); move(true); decor();
+  }
+  function howto() {
+    const dot = `<svg width="12" height="12"><circle cx="6" cy="6" r="4.5" fill="#2f5fd8"/></svg>`;
+    const sizes = (t) => `<span><svg width="26" height="14"><circle cx="4" cy="9" r="2.5" fill="#858c96"/><circle cx="17" cy="7" r="6.5" fill="#858c96"/></svg>${t}</span>`;
+    const ring = `<span><svg width="12" height="12"><circle cx="6" cy="6" r="4.5" fill="#e9eaec" stroke="#858c96" stroke-width="1.8"/></svg>Ring = saves or raises money</span>`;
+    const sep = `<span class="sep" aria-hidden="true"></span>`;
+    const lead = document.getElementById("howto-lead"), keys = document.getElementById("howto");
+    if (view === "priorities") {
+      lead.innerHTML = `<b>How to read:</b> each bubble is a theme, bigger when this budget puts more money into it. The further ` +
+        `right, the more money it has been getting over the last three budgets; the higher up, the more the budget talks about ` +
+        `it. Top right are the main priorities; top left, themes talked up before the money follows; bottom right, themes ` +
+        `still funded but talked about less. Press play to watch them move, or click a bubble to follow its path.`;
+      keys.innerHTML = `<span><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#9a5b22" stroke="#fff"/></svg>Each bubble is a theme</span>` +
+        sizes("Bigger = more money in this budget") +
+        `<span><svg width="22" height="14"><line x1="11" y1="0" x2="11" y2="14" stroke="#a8a297" stroke-dasharray="3 2"/><line x1="0" y1="7" x2="22" y2="7" stroke="#a8a297" stroke-dasharray="3 2"/></svg>Lines: an even share (7%)</span>`;
+    } else if (view === "gravity") {
+      lead.innerHTML = `<b>How to read:</b> each budget's new money falls toward the centre. The more a theme gets, the closer ` +
+        `to the core it lands: one colour at the core means a budget with one big focus, a mix means one that spreads its ` +
+        `money around. Underneath: what pays for it, the measures that save or raise money.`;
+      keys.innerHTML = `<span>${dot}Each dot is a measure</span>` + sizes("Bigger = more money") + ring + sep +
+        `<span><svg width="30" height="14"><circle cx="15" cy="7" r="6" fill="#9a5b22"/><circle cx="6" cy="7" r="3" fill="#2f5fd8"/><circle cx="24" cy="7" r="3" fill="#d2372f"/></svg>Nearer the core = bigger share</span>` +
+        `<span><svg width="12" height="12"><circle cx="6" cy="6" r="4.5" fill="${GREY}"/></svg>Grey = under 5% of the money</span>`;
+    } else {
+      lead.innerHTML = `<b>How to read:</b> each dot is one budget measure, coloured by its theme; the bigger the dot, the more ` +
+        `it costs. Measures about similar things sit close together, so each patch of the map is a topic, and the shading ` +
+        `shows where a theme gathers. Pick a budget to light up its measures.`;
+      keys.innerHTML = `<span>${dot}Each dot is a measure</span>` + sizes("Bigger = costs more") + ring + sep +
+        `<span><svg width="22" height="12"><circle cx="5" cy="6" r="3.5" fill="#2f5fd8"/><circle cx="15" cy="6" r="3.5" fill="#2f5fd8"/></svg>Close together = about similar things</span>` +
+        `<span><svg width="18" height="12"><ellipse cx="9" cy="6" rx="8" ry="5" fill="#2f5fd8" fill-opacity=".27"/></svg>Shaded = where a theme gathers</span>`;
+    }
+  }
+  const PLAY = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.6v8.8l7.2-4.4z" fill="currentColor"/></svg>`;
+  const PAUSE = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2.4" y="1.6" width="2.7" height="8.8" rx=".6" fill="currentColor"/><rect x="6.9" y="1.6" width="2.7" height="8.8" rx=".6" fill="currentColor"/></svg>`;
+  let timer = null;
+  const playBtn = document.getElementById("play");
+  const playYears = () => (view !== "map" ? YEARS.filter(okYear) : YEARS);
+  function playLabel() {
+    const p = playYears(), label = timer ? "Pause" : `Play Budgets ${p[0]} to ${p[p.length - 1]}`;
+    playBtn.innerHTML = timer ? PAUSE : PLAY;
+    playBtn.classList.toggle("on", !!timer);
+    playBtn.setAttribute("aria-label", label); playBtn.title = label;
+  }
+  function stopPlay() { if (timer) { clearInterval(timer); timer = null; playLabel(); } }
+  playBtn.addEventListener("click", () => {
+    if (timer) { stopPlay(); return; }
+    const p = playYears();
+    let i = 0;
+    setYear(p[0]);
+    timer = setInterval(() => { i += 1; if (i >= p.length) stopPlay(); else setYear(p[i]); }, view !== "map" ? 2600 : 1600);
+    playLabel();
+  });
+
+  // the chart's title, written from the data for the selected budget
+  function writeHead() {
+    const w = WEIGHED.get(year), T = document.getElementById("title");
+    const t = w.order[0];
+    if (!w.ok) T.textContent = `Budget ${year}: ${w.n} measures, too few costs to weigh`;
+    else if (w.kind === "broad") T.textContent = `Budget ${year}: broad, with no single focus`;
+    else T.textContent = `Budget ${year}: ${w.kind === "focused" ? "focused on" : "leaning toward"} ${lower(C[t])}`;
+  }
+
+  vButtons.forEach((o) => o.setAttribute("aria-pressed", String(o.dataset.key === view)));
+  howto(); playLabel();
+  layout(); setYear(LAST);
+  // names are measured with the page's font: lay out again once the web fonts have loaded
+  if (document.fonts) document.fonts.ready.then(() => { layout(); });
+  let w0 = innerWidth;
+  addEventListener("resize", () => { if (innerWidth !== w0) { w0 = innerWidth; layout(); } });
+});
+</script>
+</body>
+</html>

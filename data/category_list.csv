@@ -1,0 +1,16 @@
+cat_id,category,short
+0,Housing,Housing
+1,Affordability & social support,Affordability
+2,Health care,Health care
+3,"Trade, industry & competitiveness",Trade
+4,"Jobs, skills & immigration",Jobs
+5,Infrastructure,Infrastructure
+6,"Research, AI & technology",Research
+7,Culture & communities,Culture
+8,Nature & environment,Nature
+9,Clean energy & climate,Clean energy
+10,Taxation,Taxation
+11,Government,Government
+12,Defence & security,Defence
+13,Indigenous,Indigenous
+14,Other,Other

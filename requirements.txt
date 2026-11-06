@@ -1,0 +1,17 @@
+# Budget Galaxy notebooks, Python 3.9.6.
+# Versions are pinned so that a re-run gives the same numbers, the map included (scikit-learn, numpy and scipy decide it).
+#   pip install -r requirements.txt
+beautifulsoup4==4.15.0
+soupsieve==2.8.4
+requests==2.32.5
+pandas==2.3.3
+numpy==2.0.2
+scipy==1.13.1
+scikit-learn==1.6.1
+joblib==1.5.3
+threadpoolctl==3.7.0
+nbformat==5.10.4
+nbconvert==7.17.2
+nbclient==0.10.2
+jupyter_client==8.6.3
+ipykernel==6.31.0

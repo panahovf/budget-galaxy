@@ -1,0 +1,16 @@
+cat_id,category,measures,ax,ay
+0,Housing,69,0.6281,0.6633
+1,Affordability & social support,59,0.9146,0.397
+2,Health care,54,0.3116,0.7236
+3,"Trade, industry & competitiveness",113,0.6131,0.3568
+4,"Jobs, skills & immigration",95,0.5075,0.8945
+5,Infrastructure,33,0.5327,0.0302
+6,"Research, AI & technology",40,0.6834,0.4975
+7,Culture & communities,81,0.0804,0.3417
+8,Nature & environment,29,0.5327,0.1357
+9,Clean energy & climate,74,0.7538,0.3015
+10,Taxation,46,0.9045,0.6884
+11,Government,78,0.4774,0.6332
+12,Defence & security,126,0.5578,0.4874
+13,Indigenous,89,0.4221,0.402
+14,Other,13,0.5276,0.4372

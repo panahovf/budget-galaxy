@@ -1,0 +1,28 @@
+year,page,row,action,target,note
+2021,p2-en.html,Less: Provisions for Anticipated Cabinet Decisions Not Yet Made Included in Previous Budgets or Updates,spread_chapter_spending,,"Money set aside in earlier budgets for decisions not yet made; the table doesn't say which measures used it, so it is shared among the chapter's spending rows in proportion to their size"
+2021,p3-en.html,Less: Provisions for Anticipated Cabinet Decisions Not Yet Made Included in Previous Budgets or Updates,spread_chapter_spending,,"Money set aside in earlier budgets for decisions not yet made; the table doesn't say which measures used it, so it is shared among the chapter's spending rows in proportion to their size"
+2025,chap5-en.html,Less: unrealized Budget 2024 Responsible Government Spending savings,heading,Comprehensive Expenditure Review,"Budget 2024's savings plan that won't be realised; the 2025 review replaces it, so it is netted against the review's savings"
+2026,chap6-en.html,Less: amounts provisioned in Budget 2025 for future reviews,spread_section_savings,,"These savings were already booked in Budget 2025 as savings from future reviews (table note 3), so they aren't new: the amount is shared among the section's savings rows"
+2021,p1-en.html,Extending the Application Deadline for CEBA Gap-Filling Programs,heading,Extending the Canada Emergency Business Account,The row's wording differs from the heading; the CEBA heading covers the extended programs
+2021,p2-en.html,"Supporting Canada's Arts, Heritage, and Cultural Workers and Institutions",heading,"Supporting Canada's Arts, Culture, Heritage, and Sport Organizations and Workers","Same measure, worded differently in the table"
+2022,chap5-en.html,Expansion of Operation UNIFIER,heading,Bolstering Ukraine's Fight for Freedom,Described under this heading
+2022,chap5-en.html,Humanitarian Assistance in Ukraine,heading,Supporting Ukrainians Through the Crisis,Described under this heading
+2022,chap5-en.html,Strengthening Canada's AML/ATF Regime,heading,Strengthening Canada's Anti-Money Laundering and Anti-Terrorist Financing (AML/ATF) Regime,Same measure; the table uses the abbreviation
+2023,chap3-en.html,Updating Federal Duty to Consult Guidelines,heading,Getting Major Projects Done,Described under this heading
+2023,chap3-en.html,Employment Insurance Revenues for Measures Included in Budget 2023,table,,EI premiums raised by the section's EI measures: kept as its own row (money raised)
+2023,chap4-en.html,"Anti-Racism, Equity and Inclusion Secretariat",heading,Building on Canada's Anti-Racism Strategy,Described under this heading
+2023,chap5-en.html,Increasing NATO's Common Budget,heading,Defence Policy Update,Listed in the Defence Policy Update's text
+2023,chap5-en.html,Acquiring New Critical Weapons Systems,heading,Defence Policy Update,Listed in the Defence Policy Update's text
+2023,chap5-en.html,Replenishing the Canadian Armed Forces' Stocks,heading,Defence Policy Update,Listed in the Defence Policy Update's text
+2023,chap5-en.html,Improving the Digital Systems of the Canadian Armed Forces,heading,Defence Policy Update,Listed in the Defence Policy Update's text
+2023,chap5-en.html,Further Support Initiatives to Increase the Capabilities of the Canadian Armed Forces,heading,Defence Policy Update,Listed in the Defence Policy Update's text
+2023,chap5-en.html,Establishing a Regional Office for NATO's Defence Innovation Accelerator for the North Atlantic,heading,Defence Policy Update,Listed in the Defence Policy Update's text
+2026,chap3-en.html,Phasing out of advance payments,table,,A saving described in 'Strengthening support for workers earning low wages' but costed on its own row: kept apart so the support shows as spending and the phase-out as a saving
+2022,chap2-en.html,Canadian Critical Minerals Strategy – Infrastructure Investments,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,Critical Mineral Exploration Tax Credit,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,Canadian Critical Minerals Strategy – Integrated Data,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,Canadian Critical Minerals Strategy – Strategic Innovation Fund,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,"Canadian Critical Minerals Strategy – Technology Research, Development, and Deployment",heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,Canadian Critical Minerals Strategy – Centre of Excellence on Critical Minerals,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,Canadian Critical Minerals Strategy – Support for Northern Regulatory Processes,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading
+2022,chap2-en.html,Canadian Critical Minerals Strategy – Global Leadership on Critical Minerals,heading,Canada's Critical Minerals and Clean Industrial Strategies,Part of the Critical Minerals Strategy described under this heading

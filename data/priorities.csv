@@ -1,0 +1,81 @@
+year,window,point,money_share_this_budget,money_share_window,word_share,quadrant,near_line
+2022,2021–2022,Housing,0.1376,0.0787,0.0845,Main,True
+2022,2021–2022,Affordability & social support,0.0116,0.1443,0.036,Fading,False
+2022,2021–2022,Health care,0.1267,0.0903,0.0448,Fading,False
+2022,2021–2022,"Trade, industry & competitiveness",0.0479,0.059,0.1053,Emerging,False
+2022,2021–2022,"Jobs, skills & immigration",0.0846,0.167,0.0941,Main,False
+2022,2021–2022,Infrastructure,0.0223,0.0443,0.0222,Low priority,False
+2022,2021–2022,"Research, AI & technology",0.0314,0.0258,0.0649,Low priority,True
+2022,2021–2022,Culture & communities,0.0182,0.0195,0.07,Low priority,True
+2022,2021–2022,Nature & environment,0.0411,0.0343,0.0304,Low priority,False
+2022,2021–2022,Clean energy & climate,0.1569,0.1075,0.1235,Main,False
+2022,2021–2022,Taxation,0.0004,0.0024,0.0312,Low priority,False
+2022,2021–2022,Government,0.0017,0.0079,0.0115,Low priority,False
+2022,2021–2022,Defence & security,0.1388,0.0819,0.0959,Main,False
+2022,2021–2022,Indigenous,0.1647,0.1245,0.1086,Main,False
+2022,2021–2022,Other,0.0159,0.0127,0.0132,,False
+2022,2021–2022,Savings and money raised,0.4184,0.2476,0.0639,kept quiet,False
+2023,2021–2023,Housing,0.0007,0.0527,0.03,Low priority,False
+2023,2021–2023,Affordability & social support,0.0354,0.108,0.0976,Main,False
+2023,2021–2023,Health care,0.4262,0.2023,0.0917,Main,False
+2023,2021–2023,"Trade, industry & competitiveness",0.0097,0.0426,0.1005,Emerging,False
+2023,2021–2023,"Jobs, skills & immigration",0.0466,0.1268,0.1184,Main,False
+2023,2021–2023,Infrastructure,0.0144,0.0343,0.0311,Low priority,False
+2023,2021–2023,"Research, AI & technology",0.0075,0.0197,0.0277,Low priority,False
+2023,2021–2023,Culture & communities,0.0206,0.0199,0.0594,Low priority,False
+2023,2021–2023,Nature & environment,0.0135,0.0273,0.0136,Low priority,False
+2023,2021–2023,Clean energy & climate,0.2528,0.1559,0.15,Main,False
+2023,2021–2023,Taxation,0.011,0.0053,0.0096,Low priority,False
+2023,2021–2023,Government,0.0355,0.0171,0.0254,Low priority,False
+2023,2021–2023,Defence & security,0.0417,0.0685,0.1141,Emerging,True
+2023,2021–2023,Indigenous,0.0824,0.1105,0.0807,Main,True
+2023,2021–2023,Other,0.0019,0.0091,0.0087,,False
+2023,2021–2023,Savings and money raised,0.3779,0.291,0.0416,kept quiet,False
+2024,2022–2024,Housing,0.115,0.0845,0.149,Main,False
+2024,2022–2024,Affordability & social support,0.1053,0.0508,0.1273,Emerging,False
+2024,2022–2024,Health care,0.0434,0.1988,0.0825,Main,False
+2024,2022–2024,"Trade, industry & competitiveness",0.0469,0.0348,0.0921,Emerging,False
+2024,2022–2024,"Jobs, skills & immigration",0.0859,0.0724,0.07,Fading,True
+2024,2022–2024,Infrastructure,0.0291,0.0219,0.0194,Low priority,False
+2024,2022–2024,"Research, AI & technology",0.1064,0.0484,0.0458,Low priority,False
+2024,2022–2024,Culture & communities,0.0144,0.0177,0.0597,Low priority,False
+2024,2022–2024,Nature & environment,0.009,0.0212,0.0162,Low priority,False
+2024,2022–2024,Clean energy & climate,0.0427,0.1508,0.0745,Main,True
+2024,2022–2024,Taxation,0.0183,0.0099,0.0107,Low priority,False
+2024,2022–2024,Government,0.0225,0.0199,0.0207,Low priority,False
+2024,2022–2024,Defence & security,0.1991,0.1265,0.0692,Fading,True
+2024,2022–2024,Indigenous,0.1517,0.133,0.1003,Main,False
+2024,2022–2024,Other,0.0102,0.0093,0.0209,,False
+2024,2022–2024,Savings and money raised,0.4169,0.4044,0.0416,kept quiet,False
+2025,2023–2025,Housing,0.0737,0.0632,0.0301,Low priority,True
+2025,2023–2025,Affordability & social support,0.223,0.1212,0.0614,Fading,False
+2025,2023–2025,Health care,0.0002,0.1566,0.0075,Fading,False
+2025,2023–2025,"Trade, industry & competitiveness",0.0976,0.0514,0.3429,Emerging,False
+2025,2023–2025,"Jobs, skills & immigration",0.0498,0.0608,0.0748,Emerging,True
+2025,2023–2025,Infrastructure,0.0632,0.0356,0.0418,Low priority,False
+2025,2023–2025,"Research, AI & technology",0.0108,0.0416,0.0599,Low priority,False
+2025,2023–2025,Culture & communities,0.0097,0.0149,0.0491,Low priority,False
+2025,2023–2025,Nature & environment,0.0079,0.0101,0.0052,Low priority,False
+2025,2023–2025,Clean energy & climate,0.0011,0.0989,0.061,Fading,False
+2025,2023–2025,Taxation,0.0035,0.0109,0.0042,Low priority,False
+2025,2023–2025,Government,0.0131,0.0237,0.0443,Low priority,False
+2025,2023–2025,Defence & security,0.43,0.2236,0.1245,Main,False
+2025,2023–2025,Indigenous,0.0162,0.0835,0.0145,Fading,False
+2025,2023–2025,Other,0.0,0.004,0.0,,False
+2025,2023–2025,Savings and money raised,0.3765,0.3904,0.0789,talked up,False
+2026,2024–2026,Housing,0.1003,0.0964,0.0738,Main,True
+2026,2024–2026,Affordability & social support,0.1212,0.1499,0.0468,Fading,False
+2026,2024–2026,Health care,0.0104,0.018,0.0204,Low priority,False
+2026,2024–2026,"Trade, industry & competitiveness",0.3563,0.167,0.2723,Main,False
+2026,2024–2026,"Jobs, skills & immigration",0.0052,0.047,0.0349,Low priority,False
+2026,2024–2026,Infrastructure,0.035,0.0424,0.054,Low priority,False
+2026,2024–2026,"Research, AI & technology",0.0211,0.0461,0.037,Low priority,False
+2026,2024–2026,Culture & communities,0.0247,0.0163,0.0715,Emerging,True
+2026,2024–2026,Nature & environment,0.0116,0.0095,0.0111,Low priority,False
+2026,2024–2026,Clean energy & climate,0.0782,0.0407,0.0704,Low priority,True
+2026,2024–2026,Taxation,0.0119,0.0112,0.0597,Low priority,False
+2026,2024–2026,Government,0.0046,0.0134,0.0492,Low priority,False
+2026,2024–2026,Defence & security,0.0172,0.2154,0.1174,Main,False
+2026,2024–2026,Indigenous,0.2022,0.1234,0.0565,Fading,False
+2026,2024–2026,Other,0.0,0.0034,0.0,,False
+2026,2024–2026,Savings and money raised,0.0382,0.2772,0.025,kept quiet,False

@@ -1,0 +1,45 @@
+year,page,table,net_fiscal_impact,sum_of_rows,difference,to_text_measures,to_table_measures,spread_over_rows
+2021,p1-en.html,Chapter 1 Protecting Canadians' Health,9658.0,9659.0,1.0,9650.0,9.0,0.0
+2021,p1-en.html,Chapter 2 Seeing Canadians and Businesses Through to Recovery,32380.0,32382.0,2.0,32252.0,130.0,0.0
+2021,p2-en.html,Chapter 3 New Opportunities for Canadians,37128.0,37129.0,1.0,46212.0,0.0,-9083.0
+2021,p2-en.html,Chapter 4 Helping Canadian Businesses Grow and Succeed,16332.0,16333.0,1.0,16264.0,69.0,0.0
+2021,p2-en.html,Chapter 5 A Healthy Environment for a Healthy Economy,8750.0,8748.0,-2.0,8599.0,149.0,0.0
+2021,p2-en.html,Chapter 6 Strengthening the Cities and Communities We Call Home,17367.0,17366.0,-1.0,16907.0,459.0,0.0
+2021,p3-en.html,Chapter 7 A More Equal Canada,10043.0,10043.0,0.0,10043.0,0.0,0.0
+2021,p3-en.html,Chapter 8 Strong Indigenous Communities,12997.0,12996.0,-1.0,15161.0,23.0,-2188.0
+2021,p3-en.html,Chapter 9 Protecting Our Shared Values,4722.0,4719.0,-3.0,4440.0,279.0,0.0
+2021,p4-en.html,Chapter 10 Responsible Government,-7070.0,-7069.0,1.0,-7757.0,688.0,0.0
+2022,chap1-en.html,Chapter 1 Making Housing More Affordable,10137.0,10136.0,-1.0,10110.0,26.0,0.0
+2022,chap2-en.html,"Chapter 2 A Strong, Growing, and Resilient Economy",5522.0,5523.0,1.0,5523.0,0.0,0.0
+2022,chap3-en.html,Chapter 3 Clean Air and a Strong Economy,12448.0,12449.0,1.0,12449.0,0.0,0.0
+2022,chap4-en.html,Chapter 4 Creating Good Middle Class Jobs,5972.0,5973.0,1.0,5965.0,8.0,0.0
+2022,chap5-en.html,Chapter 5 Canada's Leadership in the World,9438.0,9438.0,0.0,9318.0,120.0,0.0
+2022,chap6-en.html,Chapter 6 Strong Public Health Care,7097.0,7096.0,-1.0,6926.0,170.0,0.0
+2022,chap7-en.html,Chapter 7 Moving Forward on Reconciliation,10599.0,10600.0,1.0,10598.0,2.0,0.0
+2022,chap8-en.html,Chapter 8 Safe and Inclusive Communities,1720.0,1720.0,0.0,1666.0,54.0,0.0
+2022,chap9-en.html,Chapter 9 Tax Fairness and Effective Government,-25426.0,-25426.0,0.0,-25091.0,-335.0,0.0
+2023,chap1-en.html,Chapter 1 Making Life More Affordable and Supporting the Middle Class,5243.0,5244.0,1.0,5189.0,55.0,0.0
+2023,chap2-en.html,Chapter 2 Investing in Public Health Care and Affordable Dental Care,31316.0,31315.0,-1.0,30676.0,639.0,0.0
+2023,chap3-en.html,"Chapter 3 A Made-In-Canada Plan: Affordable Energy, Good Jobs, and a Growing Clean Economy",20934.0,20934.0,0.0,21147.0,-213.0,0.0
+2023,chap4-en.html,Chapter 4 Advancing Reconciliation and Building a Canada That Works for Everyone,9053.0,9058.0,5.0,6922.0,2136.0,0.0
+2023,chap5-en.html,Chapter 5 Canada's Leadership in the World,728.0,727.0,-1.0,587.0,140.0,0.0
+2023,chap6-en.html,Chapter 6 Effective Government and a Fair Tax System,-21452.0,-21452.0,0.0,-22198.0,746.0,0.0
+2024,chap1-en.html,Chapter 1 More Affordable Homes,8524.0,8524.0,0.0,8521.0,3.0,0.0
+2024,chap2-en.html,Chapter 2 Lifting Up Every Generation,10550.0,10551.0,1.0,10497.0,54.0,0.0
+2024,chap3-en.html,Chapter 3 Lowering Everday Costs,192.0,192.0,0.0,192.0,0.0,0.0
+2024,chap4-en.html,Chapter 4 Economic Growth for Every Generation,7578.0,7580.0,2.0,6918.0,662.0,0.0
+2024,chap5-en.html,"Chapter 5 Safer, Healthier Communities",6353.0,6355.0,2.0,4554.0,1801.0,0.0
+2024,chap6-en.html,Chapter 6 A Fair Future for Indigenous Peoples,9062.0,9059.0,-3.0,8776.0,283.0,0.0
+2024,chap7-en.html,Chapter 7 Protecting Canadians and Defending Democracy,10698.0,10699.0,1.0,10580.0,119.0,0.0
+2024,chap8-en.html,Chapter 8 Tax Fairness for Every Generation,-18147.0,-18146.0,1.0,-17459.0,-687.0,0.0
+2025,chap1-en.html,Chapter 1 Building a Stronger Canadian Economy,13339.0,13339.0,0.0,13291.0,48.0,0.0
+2025,chap2-en.html,Chapter 2 Shifting from Reliance to Resilience,16534.0,16534.0,0.0,16522.0,12.0,0.0
+2025,chap3-en.html,Chapter 3 Empowering Canadians,48132.0,48133.0,1.0,47866.0,267.0,0.0
+2025,chap4-en.html,Chapter 4 Protecting Canada's Sovereignty and Security,62875.0,62874.0,-1.0,62808.0,66.0,0.0
+2025,chap5-en.html,Chapter 5 Creating a More Efficient and Effective Government,-51202.0,-51200.0,2.0,-52077.0,877.0,0.0
+2026,chap1-en.html,Chapter 1 Canada's Investment Supercycle,52018.0,52019.0,1.0,51492.0,527.0,0.0
+2026,chap2-en.html,Chapter 2 A more competitive and connected Canadian economy,14983.0,14982.0,-1.0,14839.0,143.0,0.0
+2026,chap3-en.html,Chapter 3 A more affordable life,30715.0,30718.0,3.0,35689.0,-4971.0,0.0
+2026,chap4-en.html,Chapter 4 A strong and united Canada,34613.0,34614.0,1.0,33314.0,1300.0,0.0
+2026,chap5-en.html,Chapter 5 A safe and sovereign Canada,6593.0,6593.0,0.0,6396.0,197.0,0.0
+2026,chap6-en.html,Chapter 6 A more efficient government,3091.0,3091.0,0.0,137.0,890.0,2064.0
